@@ -1,0 +1,162 @@
+{% extends "layoutT.html" %}
+
+{% block titlebodyextra %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h3> This is the Sign Up Page, please fill in the information below. </h3> <br>
+
+    <form action="/user_signUp" method = "post">
+        <fieldset>
+            <div class="form-group">
+                <h3> Full Name: </h3>
+                <input type="text" autofocus class="form-control" name="personName" id="Name"required >
+            </div>
+            <div class="form-group">
+                <h3> School: </h3>
+                <input type="text" class="form-control" name="school" id="School" required >
+            </div>
+            <div class="form-group">
+                <h3> Email Address: </h3>
+                <input type = "email" class="form-control" name="email" id="Email" required >
+            </div>
+            <div class="form-group">
+                <h3> Password: (Please use a simple password)</h3>
+                <input type = "password" class="form-control" name = "password" required >
+            </div>
+            <div class="form-group">
+                <h3> Confirm Password: </h3>
+                <input type = "password" class="form-control" name = "password_second" required >
+            </div>
+            <div class="form-group">
+                <h3>Confirmation Code (provided by the HOSPITALITY Department): </h3>
+                <input type = "text" class="form-control" name = "confirmationCode" required >
+            </div>
+
+            <br
+            <h2> Please remeber to send a picture of you to the Hospitality department at hospitality@immuns.org </h2>
+            <br>
+            <div class="form-group">
+                <button class="btn btn-default" type = "submit" value = "Submit"> Submit </button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<style>body{
+font-family: font-family: 'Playfair Display', serif;;
+font-size:12px;
+}
+p, h1, form, button{border:0; margin:0; padding:0;}
+.spacer{clear:both; height:1px;}
+/* ----------- My Form ----------- */
+.myform{
+margin:0 auto;
+width:400px;
+padding:14px;
+}
+
+/* ----------- stylized ----------- */
+#stylized{
+border:solid 2px #b7ddf2;
+background:#ebf4fb;
+}
+#stylized h1 {
+font-size:14px;
+font-weight:bold;
+margin-bottom:8px;
+
+}
+#stylized p{
+font-size:11px;
+color:#666666;
+margin-bottom:20px;
+border-bottom:solid 1px #b7ddf2;
+padding-bottom:10px;
+
+}
+#stylized label{
+display:block;
+font-weight:bold;
+text-align:right;
+width:150px;
+float:left;
+}
+#stylized .small{
+color:#666666;
+display:block;
+font-size:11px;
+font-weight:normal;
+text-align:right;
+width:140px;
+}
+#stylized input.text{
+float:left;
+font-size:12px;
+padding:4px 2px;
+border:solid 1px #aacfe4;
+width:200px;
+margin:2px 0 20px 10px;
+}
+
+#stylized button{
+font-family: 'Playfair Display', serif;
+clear:both;
+display:inline-block;
+margin-left:130px;
+width:125px;
+height:31px;
+background:rgb(153,0,0) url(img/button.png) no-repeat;
+text-align:center;
+line-height:31px;
+color:white;
+font-size:100%;
+font-weight:bold;
+}
+#stylized button.reset{
+clear:both;
+margin-left:50px;
+width:25px;
+height:31px;
+background:#666666 url(img/button.png) no-repeat;
+text-align:center;
+line-height:31px;
+color:#FFFFFF;
+font-size:11px;
+font-weight:bold;
+}
+</style>
+<div id="stylized" class="myform">
+<form id="form" name="form" method="post" action="index.html">
+    <h1><center>This is the Sign Up Page, please fill in the information below.
+</center></h1><br><br>
+
+
+<label>Full Name</label>
+<input type="text" name="Full Name" id="Full Name" class="tcal"/><br><br>
+<label>School</label>
+<input type="text" name="School" id="School" /><br><br>
+<label>Email Address:</label>
+<input type="text" name="Email Address:" id="Email Address:" /><br><br>
+<label>Password: (Please use a simple password)</label>
+<input type="text" name="Password: (Please use a simple password)" id="Password: (Please use a simple password)" class="tcal"/><br><br><br>
+<label>Confirm Password:</label>
+<input type="text" name="Confirm Password:" id="Confirm Password:" class="tcal"/><br><br>
+<label>Confirmation Code (provided by the HOSPITALITY Department):
+</label>
+<input type="text" name="Confirmation Code (provided by the HOSPITALITY Department):
+" id="Confirmation Code (provided by the HOSPITALITY Department):
+" class="tcal"/><br><br>
+<br>
+<br>
+<br>
+<h1>
+Please remeber to send a picture of you to the Hospitality department at hospitality@immuns.org
+</h1>
+ <button type="Submit">Submit</button>
+<div class="spacer"></div>
+
+</form>
+</div>
+
+{% endblock %}

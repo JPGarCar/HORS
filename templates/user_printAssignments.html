@@ -1,0 +1,28 @@
+{% extends "layoutT.html" %}
+
+{% block titlebodyextra %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h3> These are the country assignments for {{school}}. You can print this page using your default browser.</h3>
+    <br>
+    <div style="font-size:18px">
+        <table class="table table-hover table-striped" style="width:100%">
+            <tr>
+                <th>Committee</th>
+                <th>Country</th>
+                <th>Delegate Name</th>
+                <th>Room</th>
+            </tr>
+            {% for delegate in delegates %}
+                <tr>
+                    <td>{{delegate.assignment.committee}}</td>
+                    <td>{{delegate.assignment.country}}</td>
+                    <td>{{delegate.name}}</td>
+                    <td>{{delegate.assignment.room}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

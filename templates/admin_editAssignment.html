@@ -1,0 +1,57 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <form action="/admin_editAssignment" method="POST">
+            <h4>RECOMMENDED ACTION: change the assignment's country <br>
+                FOR COMMITTEE CHANGE: Proceed to committee table
+                FOR ROOM CHANGE: Proceed to Change Room Page <br>
+                FOR CHANGING DELEGATE'S ASSIGNMENT: Unassign from main page and then do a Manual Assign <br>
+            <div class="form-group">
+                <h3>Country</h3>
+                <input type="text" class="form-control" name="country" value="{{assignment.country}}"/>
+            </div>
+            <div class="form-group">
+                <h3>Important: (Country is currently {{assignment.important}})</h3>
+                <div class="custom-control custom-checkbox">
+                    <td><input type="checkbox" class="form-check-input" name="Important" {% if assignment.important|string() == 'Yes' %} checked {% endif %}/></td>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" name="Button" type="submit" value="{{assignment.id}}">Edit</button>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        <h3> Want to edit the committee associated with this assignment?</h3>
+        <form action ="/admin_takeMeToCommittee" method="POST" style="display: inline;">
+                <div class="form-group">
+                    <button class="btn btn-default" type="submit" name="editCommittee" value="{{assignment.committee.id}}"> Edit Committee </button>
+                </div>
+            </form>
+    </div>
+    <div class="container">
+        {% if assignment.delegate == None %}
+        {% else %}
+            <h3> Want to change the delegate's info? </h3>
+            <form action ="/admin_takeMeToDelegate" method="POST" style="display: inline;">
+                <div class="form-group">
+                    <button class="btn btn-default" type="submit" name="editDelegate" value="{{assignment.delegate.id}}"> Edit Delegate </button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

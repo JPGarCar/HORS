@@ -1,0 +1,206 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<style>
+    .btn {
+  background-color: rgb(153,0,0);
+  font-family: 'Playfair Display', serif;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+body{
+  font-family: 'Playfair Display', serif;
+  color: black;
+            }
+</style>
+
+<div class="col-lg-6 col-lg-offset-3">
+    <form action="/adminOne" method="GET" style="display: inline;">
+    <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+    <form action ="/admin_manualRegister" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Manual Register </button>
+    </form>
+    <form action ="/admin_stats" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Stats Page </button>
+    </form>
+    <form action ="/admin_printCommittee" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Print Committee List </button>
+    </form>
+    <form action ="/admin_specialFunctions" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Special Functions </button>
+    </form>
+    </div>
+{% endblock %}
+
+{% block extratitlebody %}
+<body>
+<div class="container-fluid" style="background-color: rgba(255, 255, 0, .4);">
+    {% if error %}
+        <h3 class="text-center"><strong>Search parameters on place:   {{ error }}</strong></h3>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block body %}
+
+<form action="/adminOne" method="POST">
+    <div class="container">
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <h4> Other tables :</h4>
+                    <button class="btn btn-default" name="Button" type="submit" value="Teachers">Teachers</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="Delegates">Delegates</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="Committees">Committees</button>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h4> Other functions: </h4>
+                    <button class="btn btn-default" name="Button" type="submit" value="GenerateCode">Generate Code</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="changeRooms">Change Rooms</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="AddNewCom">Add New Committee</button>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="toCommitteeDropDown"> To committee: </label>
+                    <select name="toCommitteeDropDown" class="form-control custom-select" id="toCommitteeDropDown">
+                        {% for committee in committees %}
+                            <option value="{{committee.id}}">{{committee.name}}  {{committee.typeOfCom}}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-default" name="Button" type="submit" value="AddNewCon">Add New Countries</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="container">
+        <div class="form-group">
+            <div class="form-row">
+                <h4 style="text-align:center;"> Show: </h4>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <button class="btn btn-default" name="Button" type="submit" value="ALL">ALL</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="MS">MS</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="HS">HS</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="English">English</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="Spanish">Spanish</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="HSEN">HS EN</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="HSSP">HS SP</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="MSEN">MS EN</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="MSSP">MS SP</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="Taken">Taken</button>
+                    <button class="btn btn-default" name="Button" type="submit" value="NotTaken">Not Taken</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <div class ="row align-items-center">
+                <h4 style="text-align:center;"> Search Parameters </h4>
+                <div class="col-md-4">
+                    <label for="committeeDropDown">Committee: </label>
+                    <select name="committeeDropDown" class="form-control custom-select" id="committeeDropDown">
+                        <option value="None"> None</option>
+                    {% for committee in committees %}
+                         <option value="{{committee.id}}">{{committee.name}}  {{committee.typeOfCom}}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 ">
+                     <label for="countryField">Country: </label>
+                     <input type="text" class="form-control" name="countryField" id="countryField">
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" value="Taken" class="form-check-input" name="Taken" id="Taken">
+                        <label class="form-check-label" for="Taken"> Not Taken </label>
+                    </div>
+                </div>
+                <div class="col-md-2 center-block">
+                    <button class="btn btn-primary" name="Button" type="submit" value="Search">Search</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br>
+    <div class="container">
+        <h4>Admin user be aware that removing the delegate info from this table WILL delete the
+            assignment and delegate from the teacher.</h4>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteBulkInfo">Bulk Un-assign</button>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteBulkRow">Bulk Delete Row</button>
+        <table class="table table-hover table-striped" style="width:100%" id="selectedColumn">
+            <thead>
+                <th>SELECT</th>
+                <th>  ID  </th>
+                <th>Committee</th>
+                <th>Type Of Committee</th>
+                <th>Country</th>
+                <th>Delegate Name</th>
+                <th>Delegate School</th>
+                <th>Important</th>
+                <th>Un-assign Delegate</th>
+                <th>Edit</th>
+                <th>Delete Row</th>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                    <!-- Modal -->
+                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <h4>Are you sure you want to delete this row, the delegate and assignment would be deleted.</h4>
+                              </div>
+                              <div class="modal-footer">
+                                <div class="form-group">
+                                    <button class="btn btn-primary" name="Button" type="submit" value="DR_{{assignment.id}}">Yes I Am Sure</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    <tr>
+                        <td><input type="checkbox" value={{assignment.id}} name="Selected"></td>
+                        <td>{{assignment.country_id}} </td>
+                        <td> {{assignment.committee.name}}</td>
+                        <td>{{assignment.committee.typeOfCom}} {% if assignment.committee.advanced == "Yes" %} Advanced {% endif %}</td>
+                        <td>{{assignment.country}}</td>
+                        {% if assignment.delegate == None %}
+                        <td></td>
+                        <td></td>
+                        {% else %}
+                        <td>{{assignment.delegate.name}}</td>
+                        <td>{{assignment.delegate.teacher.school}}</td>
+                        {% endif %}
+                        <td>{{assignment.important}}</td>
+                        <td><button class="btn btn-default" type="submit" name="Button" value="DI_{{assignment.id}}">Un-assign</button></td>
+                        <td><button class="btn btn-default" type="submit" name="Button" value="Ed_{{assignment.id}}">Edit</button></td>
+                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete Row</button></td>
+                    </tr>
+                {% endfor %}
+             </tbody>
+        </table>
+    </div>
+</form>
+</body>
+{% endblock %}

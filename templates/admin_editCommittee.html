@@ -1,0 +1,48 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form action="/admin_editCommittee" method="POST">
+        <h4>RECOMMENDED ACTION: Change the committee's information <br>
+        <div class="form-group">
+            <label for="committee">Committee Name</label>
+            <input type="text" class="form-control" name="committee" value="{{committee.name}}" id="committee"/>
+        </div>
+        <div class="form-group">
+            <label for="tyepOfCom">Type of Committee:</label>
+            <select class="form-control" name="typeOfCom" id="tyepOfCom">
+                <option value="HS EN" {% if committee.typeOfCom == "HS EN" %} selected="selected" {% endif %}>HS EN</option>
+                <option value="HS SP" {% if committee.typeOfCom == "HS SP" %} selected="selected" {% endif %}>HS SP</option>
+                <option value="MS EN" {% if committee.typeOfCom == "MS EN" %} selected="selected" {% endif %}>MS EN</option>
+                <option value="MS SP" {% if committee.typeOfCom == "MS SP" %} selected="selected" {% endif %}>MS SP</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <h3>Room</h3>
+            <input type="text" class="form-control" name="room" value="{{committee.room}}"/>
+        </div>
+        <div class="form-group">
+            <h3>Advanced: (Committee is currently {{committee.advanced}})</h3>
+            <div class="custom-control custom-checkbox">
+                <td><input type="checkbox" class="form-check-input" name="advanced" {% if committee.advanced|string() == 'Yes' %} checked {% endif %}/></td>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" name="Button" type="submit" value="{{committee.id}}">Edit</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

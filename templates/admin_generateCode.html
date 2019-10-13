@@ -1,0 +1,24 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+    <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form action="/admin_generateCode" method="POST">
+        <H3>Number of Delegates:</H3> <input type="number" name="numOfDel" id="numOfDel" value=0>
+        <Button class="btn btn-default" type="submit" name="Button" value="GenCode">Generate Code</Button>
+        <H3>Code: {{code}}</H3>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+    <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h4> Changing the rooms in this page will change the rooms in the general List and also in all the teacher's/user's lists.
+            There is a button in special functions page that can erease all the rooms from all the lists. This will take a lot of time
+            , specialy if there are a lot of teachers already signed up and with assignments so please be patient.</h4>
+    <form action="/admin_changeRooms" method="POST">
+        <fieldset>
+            <ol>
+                {% for committee in committees %}
+                    <div class="form-group">
+                        <li> {{committee.name}}: <input type="text" class="form-control" value="{{committee.room}}" name="{{committee.id}}" id="{{committee.id}}"></li>
+                    </div>
+                {% endfor %}
+            </ol>
+            <button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "layoutT.html" %}
+
+{% block titlebodyextra %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h5> Welcome {{teacher.name}} to your page. It seems you have not decided what assignments you want for your paid
+         delegations, you have {{numRem}} spots available, please choose your assignments below. </h5>
+    <h5> Please know, the number of students available is limited to the number of students you paid. If you want more
+         delegations, please talk to your HOSPITALITY representative. </h5>
+
+    <form action="/user_newTeacherPage" method="post">
+        <fieldset>
+
+            <div class="container">
+                <div class="form-group">
+                    <h4> Number of middle school students in english committees, {{availableAssignments("HSEN", "No", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "MSE" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of middle school students in spanish committees, {{availableAssignments("MSSP", "No", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "MSS" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of high school students in english committees, {{availableAssignments("HSEN", "No", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "HSE" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of high school students in spanish committees, {{availableAssignments("HSSP", "No", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "HSS" value = 0 min = 0 >
+                </div>
+            </div>
+
+            <div class="container">
+                <h5>Please note that if you decide to give any of your delegates important roles, they are expected to participate
+                more often and make more valuable contribution that will have a meaningful impact on the debate and the
+                resolution process. Being an important delegate does not equate to a higher probability of winning an
+                award, chairs will not be informed about which delegates are designated by the Secretariat as important.</h5>
+                <div class="form-group">
+                    <h4> Number of middle school students in english committees with important assignments, {{availableAssignments("HSEN", "Yes", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "MSEI" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of middle school students in spanish committees with important assignments {{availableAssignments("MSSP", "Yes", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "MSSI" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of high school students in english committees with important assignments {{availableAssignments("HSEN", "Yes", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "HSEI" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of high school students in spanish committees with important assignments {{availableAssignments("HSSP", "Yes", "No")}} available </h4>
+                    <input type = "number" class="form-control" name = "HSSI" value = 0 min = 0 >
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
+                </div>
+            </div>
+
+            <div class="container">
+                <h5>These are the advanced committees: Blah blah blah</h5>
+                <div class="form-group">
+                    <h4> Number of middle school students in advanced english committees </h4>
+                    <input type = "number" class="form-control" name = "MSEA" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of middle school students in advanced spanish committees </h4>
+                    <input type = "number" class="form-control" name = "MSSA" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of high school students in advanced english committees </h4>
+                    <input type = "number" class="form-control" name = "HSEA" value = 0 min = 0 >
+                </div>
+                <div class="form-group">
+                    <h4> Number of high school students in advanced spanish committees </h4>
+                    <input type = "number" class="form-control" name = "HSSA" value = 0 min = 0 >
+                </div>
+
+                <div class="container">
+                    <div class="form-group">
+                        <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

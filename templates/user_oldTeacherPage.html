@@ -1,0 +1,30 @@
+{% extends "layoutT.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-6 col-lg-offset-4">
+    <form action="/logOut" method="POST" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Log Out </button>
+    </form>
+    <form action ="/userDownload" method="POST" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Download Assignments </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h5> These are your assigned delegations, please specify the name of the student for each delegation.
+         Delegations marked with an asterisk are important delegations.</h5>
+    <form action="/user_oldTeacherPage" method="POST">
+        <fieldset>
+            <ol>
+                {% for delegate in delegates %}
+                    <li> {{delegate.assignment.committee.name}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == "Yes" %}  -  Important Country {% endif %} {% if delegate.assignment.committee.advanced == "Yes" %}  -  Advanced Committee {% endif %}
+                    <input type="text" class="form-control" value="{{delegate.name}}" name="{{delegate.id}}" id="{{delegate.id}}"></li>
+                {% endfor %}
+            </ol>
+            <button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

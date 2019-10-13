@@ -1,0 +1,36 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form action="/admin_specialFunctions" method="POST">
+        <h4>This will delete all the info in the database including teachers, delegates and assignments</h4>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteAll">Delete All</button> <br>
+        <h4>This will delete all the information on the main committee/country list including assignments and delegate info</h4>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteAllCountryInfo">Delete Assignments</button> <br>
+        <h4>This will delete all the teachers and their delegates</h4>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteAllUserTables">Delete All Teachers</button> <br>
+        <h4>This will erase all the delegates from assignments and teachers</h4>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteAllDelegateInfo">Delete All Delegates</button>
+        <h4>This will delete all the assignments for the chosen committee</h4>
+        <p1> To committee: </p1><select name="committeeDropDown">
+            {% for committee in committees %}
+                <option value="{{committee.id}}">{{committee.name}}  {{committee.typeOfCom}}</option>
+            {% endfor %}
+        </select> <br>
+        <button class="btn btn-default" name="Button" type="submit" value="DeleteEntireCommittee">Delete Entire Committee</button>
+    </form>
+</div>
+{% endblock %}

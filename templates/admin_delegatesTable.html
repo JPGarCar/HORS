@@ -1,0 +1,88 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+    <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<form action="/admin_delegatesTables" method="POST">
+    <div class="container">
+        <h3> Search Parameters:</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <label for="schoolDropDown">School </label>
+                <select name="schoolDropDown" class="form-control custom-select" id="schoolDropDown">
+                    <option value="None"> None</option>
+                {% for teacher in teachers %}
+                     <option value="{{teacher.id}}">{{teacher.school}}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 ">
+                 <label for="delegateName">Delegate name: </label>
+                 <input type="text" class="form-control" name="delegateName" id="delegateName">
+            </div>
+            <div class="col-md-2 center-block">
+                <button class="btn btn-primary" name="Button" type="submit" value="Search">Search</button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+         <table class="table table-hover table-striped" style="width:100%">
+          <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>School</th>
+            <th>Committee</th>
+            <th>Country</th>
+            <th>Edit Delegate</th>
+            <th>Delete Delegate</th>
+          </thead>
+          <tbody>
+            {% for delegate in delegates %}
+                <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <h4>Are you sure you want to delete the delegate. Doing so would delete the delegate and would free its assignment.</h4>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="form-group">
+                                <button class="btn btn-primary" name="Button" type="submit" value="DE_{{delegate.id}}">Yes I Am Sure</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                <tr>
+                    <td>{{delegate.id}}</td>
+                    <td>{{delegate.name}}</td>
+                    <td>{{delegate.teacher.school}}</td>
+                    <td>{{delegate.assignment.committee.name}}  {{delegate.assignment.committee.typeOfCom}}</td>
+                    <td>{{delegate.assignment.country}}</td>
+                    <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{delegate.id}}">Edit</button></td>
+                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button></td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</form>
+{% endblock %}

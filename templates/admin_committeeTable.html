@@ -1,0 +1,74 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+    <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<form action="/admin_committeeTable" method="POST">
+    <div class="container">
+         <table class="table table-hover table-striped" style="width:100%">
+          <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type Of Committee</th>
+            <th>Room</th>
+            <th>Advanced</th>
+            <th>Number of Assignments</th>
+            <th>Number of Delegates</th>
+            <th>Number of Important Assignments</th>
+            <th>Number of Important Delegates</th>
+            <th>Edit Committee</th>
+            <th>Delete Committee</th>
+          </thead>
+          <tbody>
+            {% for committee in committees %}
+              <!-- Modal -->
+                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <h4>Are you sure you want to delete the Committee. Doing so would delete all of the delgates and assignments connected to the committee.</h4>
+                      </div>
+                      <div class="modal-footer">
+                        <div class="form-group">
+                            <button class="btn btn-primary" name="Button" type="submit" value="DE_{{committee.id}}">Yes I Am Sure</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td>{{committee.id}}</td>
+                    <td>{{committee.name}}</td>
+                    <td>{{committee.typeOfCom}}</td>
+                    <td>{{committee.room}}</td>
+                    <td>{{committee.advanced}}</td>
+                    <td>{{committee.numOfAssignments()}}</td>
+                    <td>{{committee.numOfDelegates()}}</td>
+                    <td>{{committee.numOfImportantAssignments()}}</td>
+                    <td>{{committee.numOfImportantDelegates()}}</td>
+                    <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{committee.id}}">Edit</button></td>
+                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button></td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</form>
+{% endblock %}

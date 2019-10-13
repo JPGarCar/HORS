@@ -1,0 +1,63 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form action="/admin_teachersTableEdit" method="POST">
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <h4>Are you sure of what you are doing? Some changes might affect more than what you think. Contact JP Garcia for password.</h4>
+              </div>
+              <div class="modal-footer">
+                <div class="form-group">
+                    <button class="btn btn-primary" name="Button" type="submit" value="NP_{{teacher.id}}">Enter</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+            <h3>School</h3> <input type="text" class="form-control" name="school" value="{{teacher.school}}"/> <br>
+        </div>
+        <div class="form-group">
+            <h3>Email</h3> <input type="text" class="form-control" name="email" value="{{teacher.email}}"/> <br>
+        </div>
+        <div class="form-group">
+        <h3> New Password    (DO NOT CHANGE UNLESS YOU WANT TO CHANGE THE PASSWORD) </h3>
+        <input type="text" class="form-control" name="password" value="{{teacher.password}}"/>
+        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Change Password</button>
+        </div>
+        <div class="form-group">
+        <h3>Confirmation Code</h3><input type="text" class="form-control" name="ConfCode" value="{{teacher.confirmationCode}}"/> <br>
+        </div>
+        <div class="form-group">
+        <button class="btn btn-default" name="Button" type="submit" value="{{teacher.id}}">Edit</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

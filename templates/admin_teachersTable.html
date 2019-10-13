@@ -1,0 +1,69 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<form action="/admin_teachersTable" method="POST">
+    <div class="container">
+        <h4> Admins be aware that removing a teacher from this table will cause the teacher's assignments to me removed from the system.</h4>
+        <table class="table table-hover table-striped" style="width:100%">
+          <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>School</th>
+            <th style="width: 150px;">Password</th>
+            <th>Confirmation Code</th>
+            <th>Delete</th>
+            <th>Edit</th>
+          </thead>
+          <tbody>
+                {% for teacher in teachers %}
+                  <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <h4>Are you sure you want to delete the teacher. Doing so would delete all the teacher's info, delegats and their assignments would be free.</h4>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="form-group">
+                                <button class="btn btn-primary" name="Button" type="submit" value="DE_{{teacher.id}}">Yes I Am Sure</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <tr>
+                        <td>{{teacher.id}}</td>
+                        <td>{{teacher.name}}</td>
+                        <td>{{teacher.email}}</td>
+                        <td>{{teacher.school}}</td>
+                        <td style="max-width: 150px; word-wrap: break-word">{{teacher.password}}</td>
+                        <td>{{teacher.confirmationCode}}</td>
+                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button></td>
+                        <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{teacher.id}}">Edit</button></td>
+                    </tr>
+                {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</form>
+{% endblock %}

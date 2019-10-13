@@ -1,0 +1,63 @@
+{% extends "layoutA.html" %}
+
+{% block titlebodyextra %}
+<div class="col-lg-4 col-lg-offset-5">
+    <form action="/adminOne" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
+    </form>
+    <form action ="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extratitlebody %}{% endblock %}
+
+{% block body %}
+<form action="/admin_manualRegister" method="POST">
+    <div class="container">
+        <h4> This is the manual register page to assign a committee/country to a specific teacher. There is always that kind of teacher.
+            Once this is done, the assignment should be available in the teacher's/user's portal where she can enter the name of the delegate.</h4>
+        <br>
+        {% if second == False %}
+        <h5> To Teacher: </h5> <select class="form-control" name="toTeacher">
+            {% for teacher in teachers %}
+              <option value="{{teacher.id}}">{{teacher.name}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <h5> Add the following assignment.</h5>
+        <div class="form-group">
+            <h5>Committee: </h5>
+            <select class="form-control" name="committee">
+                {% for committee in committees %}
+                  <option value="{{committee.id}}">{{committee.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" name="Button" type="submit" value="next">Next</button>
+        </div>
+        {% endif %}
+    </div>
+    <div class="container">
+        {% if second == True %}
+        <div class="form-group">
+            <h3>Assigning to {{teacher.name}} from {{teacher.school}} assignment from {{committee.name}}  {{committee.typeOfCom}}:</h3>
+        </div>
+        <div class="form-group">
+             <h5>Country:</h5><select class="form-control" name="country">
+                {% for assignment in assignments %}
+                <div class="form-group">
+                    <option value="{{assignment.id}}">{{assignment.country}}</option>
+                </div>
+                {% endfor %}
+            </select>
+            <div class="form-group">
+                <Button class="btn btn-default" type="submit" name="Button" value="assign">Assign</Button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

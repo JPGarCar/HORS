@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+        <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta -->
+        <meta charset="utf-8"/>
+        <meta content="initial-scale=1, width=device-width" name="viewport"/>
+
+        <!-- documentation at http://getbootstrap.com/, alternative themes at https://www.bootstrapcdn.com/bootswatch/ -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <title>
+            IMMUNS Registration
+        </title>
+    </head>
+    <body>
+        <style>
+            body {
+                height: 100%;
+                margin: 0;
+                background-color: #EEE7DB
+            }
+            .full-full {
+                background-color: #EEE7DB;
+                height: 100%;
+            }
+            .general-style {
+                font-family: 'Playfair Display', serif;
+                color: rgb(0, 0, 0);
+                background-color: #EEE7DB;
+                height:100%;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+        <div class="container-fluid general-style">
+
+            <div class="container-fluid" style ="background-color: rgb(153,0,0);">
+                <h1 class="text-center"> IMMUNS Registration </h1> <br>
+                {% block titlebodyextra %}{% endblock %}
+            </div>
+            <script>
+                $(document).ready(function(){
+                    setTimeout(function() {
+                        $('#flashing').fadeOut('slow');
+                    }, 20000); });
+            </script>
+            <div id ="flashing"class="container-fluid" style="background-color: rgba(255, 255, 0, .4);">
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    <ol class="list-unstyled">
+                    {% for message in messages %}
+                      <li><bold><h3 class="text-center">{{ message }}</h3></bold></li>
+                    {% endfor %}
+                    </ol>
+                  {% endif %}
+                {% endwith %}
+            </div>
+            {% block body %}{% endblock %}
+        </div>
+        <div class="full-full"></div>
+    </body>
+</html>
