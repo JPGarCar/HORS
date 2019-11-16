@@ -150,6 +150,7 @@ body{
                 <th>Type Of Committee</th>
                 <th>Country</th>
                 <th>Delegate Name</th>
+                <th>Delegate Grade</th>
                 <th>Delegate School</th>
                 <th>Important</th>
                 <th>Un-assign Delegate</th>
@@ -159,7 +160,7 @@ body{
             <tbody>
                 {% for assignment in assignments %}
                     <!-- Modal -->
-                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal fade" id="exampleModalCenter{{assignment.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                           <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
@@ -188,14 +189,16 @@ body{
                         {% if assignment.delegate == None %}
                         <td></td>
                         <td></td>
+                        <td></td>
                         {% else %}
                         <td>{{assignment.delegate.name}}</td>
+                        <td>{{assignment.delegate.grade}}</td>
                         <td>{{assignment.delegate.teacher.school}}</td>
                         {% endif %}
                         <td>{{assignment.important}}</td>
                         <td><button class="btn btn-default" type="submit" name="Button" value="DI_{{assignment.id}}">Un-assign</button></td>
                         <td><button class="btn btn-default" type="submit" name="Button" value="Ed_{{assignment.id}}">Edit</button></td>
-                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete Row</button></td>
+                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{assignment.id}}">Delete Row</button></td>
                     </tr>
                 {% endfor %}
              </tbody>

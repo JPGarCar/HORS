@@ -31,7 +31,7 @@
           <tbody>
                 {% for teacher in teachers %}
                   <!-- Modal -->
-                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal fade" id="exampleModalCenter{{teacher.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -58,7 +58,7 @@
                         <td>{{teacher.school}}</td>
                         <td style="max-width: 150px; word-wrap: break-word">{{teacher.password}}</td>
                         <td>{{teacher.confirmationCode}}</td>
-                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button></td>
+                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{teacher.id}}">Delete</button></td>
                         <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{teacher.id}}">Edit</button></td>
                     </tr>
                 {% endfor %}

@@ -5,6 +5,7 @@ import helpers
 from typeOfCommittee import TypeOfCom
 from Important import Important
 from advanced import Advanced
+from grades import Grades
 from application import db
 from passlib.apps import custom_app_context as pwd_context
 
@@ -49,7 +50,8 @@ class Teacher(db.Model):
     ### returns the rendered template user_oldTeacherPage.html with corresponding data from current user's table
     def returnUserPageOld(self):
         delegates = self.delegates
-        return render_template("user_oldTeacherPage.html", delegates=delegates)
+        grades = helpers.getGrades()
+        return render_template("user_oldTeacherPage.html", delegates=delegates, grades=grades)
 
 
     ### makeUser (String String -> String)
@@ -99,13 +101,15 @@ class Assignment(db.Model):
 class Delegate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
+    grade = db.Column(db.Text)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'), nullable=False)
 
-    def __init__(self, name, assignment, teacher):
+    def __init__(self, name, assignment, teacher, grade : Grades):
         self.name = name
         self.assignment_id = assignment
         self.teacher_id = teacher
+        self.grade = grade
 
 
 class Committee(db.Model):

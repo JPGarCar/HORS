@@ -38,7 +38,7 @@ def randomCountry(number, typeOfCom, important, teacher, advanced):
         # assignment from assignemnts in index "codeID"
         assignment = assignments[codeID]
         # assignment assigned to current user and its table updated
-        delegate = Delegate(" ", assignment.id, teacher.id)
+        delegate = Delegate(" ", assignment.id, teacher.id, "")
         db.session.add(delegate)
         # reduces number of pedning assignments by one
         numAssign = numAssign - 1

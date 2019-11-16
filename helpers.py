@@ -1,6 +1,7 @@
 from typeOfCommittee import TypeOfCom
 from Important import Important
 from advanced import Advanced
+from grades import Grades
 
 ###############################################################################################################################################################
 ###############################################################################################################################################################
@@ -57,3 +58,8 @@ def replaceSpecial(string):
     string = string.replace("'", "")
     string = string.replace(".", "")
     return string
+
+### return the list of all possible grades plus an empty string at the beginning
+def getGrades():
+    enum_list = list(map(lambda c: c.value, Grades))
+    return enum_list

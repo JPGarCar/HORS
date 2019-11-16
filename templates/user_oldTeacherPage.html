@@ -1,30 +1,149 @@
 {% extends "layoutT.html" %}
 
 {% block titlebodyextra %}
-<div class="col-lg-6 col-lg-offset-4">
-    <form action="/logOut" method="POST" style="display: inline;">
-        <button class="btn btn-default" type="submit"> Log Out </button>
-    </form>
-    <form action ="/userDownload" method="POST" style="display: inline;">
-        <button class="btn btn-default" type="submit"> Download Assignments </button>
-    </form>
+<style>
+    .btn {
+  background-color: rgb(153,0,0);
+  font-family: 'Playfair Display', serif;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+/* ----------- Option 2 style  ----------- */
+        body{
+    font-family: 'Playfair Display', serif;
+    font-size:17px;
+    }
+         p, h1, form, button{border:0; margin:0; padding:0;}
+    .spacer{clear:both; height:1px;}
+
+        /* ----------- My Form ----------- */
+
+    .myform{
+    margin:0 auto;
+    width:75%;
+    padding:2.5%;
+    }
+
+/* ----------- stylized ----------- */
+        #stylized{
+    border:solid 3px #660505;
+    background:#b33d3d;
+    }
+
+        #stylized h1 {
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:5px;
+    }
+
+        #stylized p{
+    font-size:11px;
+    color:#666666;
+    margin-bottom:20px;
+    border-bottom:solid 1px #b7ddf2;
+    padding-bottom:10px;
+    }
+
+        #stylized label{
+    display:block;
+    font-weight:bold;
+    text-align:right;
+    width:140px;
+    float:left;
+    }
+
+        #stylized .small{
+    color:#666666;
+    display:block;
+    font-size:20px;
+    font-weight:normal;
+    text-align:center;
+    width:140px;
+    }
+
+        #stylized input.text{
+    float:center;
+    font-size:20px;
+    padding:4px 2px;
+    border:solid 1px #aacfe4;
+    width:200px;
+    margin:2px 0 20px 10px;
+    }
+
+        #stylized button{
+    clear:both;
+    display:inline-block;
+    margin-left:150px;
+    width:125px;
+    height:31px;
+    background:#660505 url(img/button.png) no-repeat;
+    text-align:center;
+    line-height:31px;
+    color:#FFFFFF;
+    font-size:20px;
+    font-weight:bold;
+    font-family: 'Playfair Display', serif;
+    }
+</style>
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-lg-offset-5">
+        <form action="/logOut" method="POST" style="display: inline;">
+            <button class="btn btn-default" type="submit"> Log Out </button>
+        </form>
+        <form action ="/userDownload" method="POST" style="display: inline;">
+            <button class="btn btn-default" type="submit"> Download Assignments </button>
+        </form>
+    </div>
 </div>
+
 {% endblock %}
 
 {% block body %}
+
 <div class="container">
-    <h5> These are your assigned delegations, please specify the name of the student for each delegation.
-         Delegations marked with an asterisk are important delegations.</h5>
+    <h4> These are your assigned delegations, please specify the name and grade of the student for each delegation.
+         Delegations marked with an asterisk are important delegations.</h4>
+</div>
+
+
+<div>
     <form action="/user_oldTeacherPage" method="POST">
-        <fieldset>
-            <ol>
-                {% for delegate in delegates %}
-                    <li> {{delegate.assignment.committee.name}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == "Yes" %}  -  Important Country {% endif %} {% if delegate.assignment.committee.advanced == "Yes" %}  -  Advanced Committee {% endif %}
-                    <input type="text" class="form-control" value="{{delegate.name}}" name="{{delegate.id}}" id="{{delegate.id}}"></li>
-                {% endfor %}
-            </ol>
-            <button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button>
-        </fieldset>
+        <ol>
+            {% for delegate in delegates %}
+                <div id="stylized" class="myform">
+                    <li>
+                        <h1><center>{{delegate.assignment.committee.name}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == "Yes" %}  -  Important Country {% endif %} {% if delegate.assignment.committee.advanced == "Yes" %}  -  Advanced Committee {% endif %}</center></h1>
+                        <br><br>
+
+                        <label>Student Full Name & Last Name</label>
+                        <input type="text" name="N_{{delegate.id}}" id="N_{{delegate.id}}"  class="form-control" value="{{delegate.name}}" />
+                        <br>
+
+                        <label>Grade Level  </label> &nbsp;&nbsp;
+                        <select name="G_{{delegate.id}}" class="form-control custom-select" id="G_{{delegate.id}}">
+                            <option value="{{delegate.grade}}">{{delegate.grade}}</option>
+                            {% for grade in grades %}
+                                <option value="{{grade}}">{{grade}}</option>
+                            {% endfor %}
+                        </select>
+                    </li>
+                </div>
+            {% endfor %}
+        </ol>
+    	<br>
+    	<br>
+    	<center><button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button></center>
     </form>
 </div>
+
 {% endblock %}

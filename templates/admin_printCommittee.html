@@ -14,15 +14,20 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+<style>
+        h1{
+      font-family: 'Playfair Display', serif;
+       color: black;
+            }
+</style>
         <title>
-            Immuns Registration
+            IMMUNS Registration
         </title>
     </head>
     <body>
-        <div style="font-family:Cinzel;">
-            <div class="container-fluid" style ="background-color: red;">
-                <h1 class="text-center"> Immuns Registration </h1> <br>
+        <div style="font-family: 'Playfair Display', serif;">
+            <div class="container-fluid" style ="background-color: rgb(153,0,0);">
+                <h1 class="text-center"> IMMUNS Registration </h1> <br>
             </div>
             <br><br>
             {% if first == True %}
@@ -40,7 +45,7 @@
             {% endif %}
             {% if second == True %}
             <div class="container">
-                <h3> These are the country assignemnts for {{committee}}, located in room {{room}}. You can print this page using your defoult browser.</h3>
+                <h3> These are the country assignemnts for {{committee.name}}, {{committee.typeOfCom}}, Advanced : {{committee.advanced}}, located in room {{committee.room}}. You can print this page using your default browser.</h3>
                 <br>
                 <div style="font-size:18px">
                     <table class="table table-hover table-striped" style="width:100%">
@@ -48,14 +53,16 @@
                             <th>Committee</th>
                             <th>Country</th>
                             <th>Delegate Name</th>
+                            <th>Delegate Grade level</th>
                             <th>Delegate School</th>
                         </tr>
                         {% for assignment in assignments %}
                             <tr>
                                 <td>{{assignment.committee.name}}</td>
                                 <td>{{assignment.country}}</td>
-                                <td>{{assignment.delegate.name}}</td>
-                                <td>{{assignment.delegate.school}}</td>
+                                <td>{% if assignment.delegate %} {{assignment.delegate.name}} {% endif %}</td>
+                                <td>{% if assignment.delegate %} {{assignment.delegate.grade}} {% endif %}</td>
+                                <td>{% if assignment.delegate.teacher %} {{assignment.delegate.teacher.school}} {% endif %}</td>
                             </tr>
                         {% endfor %}
                     </table>

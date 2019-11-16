@@ -12,14 +12,16 @@
                 <th>Committee</th>
                 <th>Country</th>
                 <th>Delegate Name</th>
+                <th>Delegate Grade Level</th>
                 <th>Room</th>
             </tr>
             {% for delegate in delegates %}
                 <tr>
-                    <td>{{delegate.assignment.committee}}</td>
+                    <td>{{delegate.assignment.committee.name}} - {{delegate.assignment.committee.typeOfCom}}</td>
                     <td>{{delegate.assignment.country}}</td>
                     <td>{{delegate.name}}</td>
-                    <td>{{delegate.assignment.room}}</td>
+                    <td>{{delegate.grade}}</td>
+                    <td>{{delegate.assignment.committee.room}}</td>
                 </tr>
             {% endfor %}
         </table>

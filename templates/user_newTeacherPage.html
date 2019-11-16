@@ -3,86 +3,300 @@
 {% block titlebodyextra %}{% endblock %}
 
 {% block body %}
+<style>
+table.comicGreen {
+  font-family: "Times New Roman", Times, serif;
+  border: 4px solid #CB2323;
+  background-color: #EEEEEE;
+  width: 100%;
+  height: 200%;
+  text-align: center;
+  border-collapse: collapse;
+}
+table.comicGreen td, table.comicGreen th {
+  border: 1px solid #CB2323;
+  padding: 5px 10px;
+}
+table.comicGreen tbody td {
+  font-size: 19px;
+  font-weight: bold;
+  color: #000000;
+}
+table.comicGreen tr:nth-child(even) {
+  background: #E08787;
+}
+table.comicGreen thead {
+  background: #CB2323;
+  background: -moz-linear-gradient(top, #d85a5a 0%, #d03939 66%, #CB2323 100%);
+  background: -webkit-linear-gradient(top, #d85a5a 0%, #d03939 66%, #CB2323 100%);
+  background: linear-gradient(to bottom, #d85a5a 0%, #d03939 66%, #CB2323 100%);
+  border-bottom: 1px solid #444444;
+}
+table.comicGreen thead th {
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
+  border-left: 2px solid #CB2323;
+}
+
+table.comicGreen thead th:first-child {
+  border-left: none;
+}
+
+table.comicGreen tfoot td {
+  font-size: 21px;
+}
+table.comicGreen tfoot .links {
+  text-align: right;
+}
+table.comicGreen tfoot .links a{
+  display: inline-block;
+  background: #FFFFFF;
+  color: #D13D36;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+</style>
+
 <div class="container">
-    <h5> Welcome {{teacher.name}} to your page. It seems you have not assigned delegations to your students,
-    you have {{numRem}} students to assign, please choose your assignments below. </h5>
-    <h5> Please know, the number of students available is limited to the number of students you paid. If you want more
-         delegations, please talk to your HOSPITALITY representative. </h5>
-
     <form action="/user_newTeacherPage" method="post">
-        <fieldset>
+    <h2> <strong>Welcome {{teacher.name}} </strong> to your page. It seems you have not assigned delegations to your students,
+    you have {{numRem}} students to assign, please choose your assignments below. </h2>
+    <br>
+    <h4> Please know, the number of students available is limited to the number of students you paid. If you want more
+         delegations, please talk to your HOSPITALITY representative. </h4>
+    <h3>Please select the number of delegates you want in a Normal Commitee.</h3>
+    <div class="container">
+        <table class="comicGreen">
+            <thead>
+                <tr>
+                    <th>Committee</th>
+                    <th>English</th>
+                    <th>Spanish</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>High School</td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["HSEA"]}} Available
+                                </h5>
 
-            <div class="container">
-                <div class="form-group">
-                    <h4> Number of middle school students in english committees, {{availability["MSEA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "MSE" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of middle school students in spanish committees, {{availability["MSSA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "MSS" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of high school students in english committees, {{availability["HSEA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "HSE" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of high school students in spanish committees, {{availability["HSSA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "HSS" value = 0 min = 0 >
-                </div>
-            </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "HSE" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["HSSA"]}} Available
+                                </h5>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "HSS" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Middle School</td>
+                     <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["MSEA"]}} Available
+                                </h5>
 
-            <div class="container">
-                <h5>Please note that if you decide to give any of your delegates important roles, they are expected to participate
-                more often and make more valuable contribution that will have a meaningful impact on the debate and the
-                resolution process. Being an important delegate does not equate to a higher probability of winning an
-                award, chairs will not be informed about which delegates are designated by the Secretariat as important.</h5>
-                <div class="form-group">
-                    <h4> Number of middle school students in english committees with important assignments, {{availability["MSEIA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "MSEI" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of middle school students in spanish committees with important assignments, {{availability["MSSIA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "MSSI" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of high school students in english committees with important assignments, {{availability["HSEIA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "HSEI" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of high school students in spanish committees with important assignments, {{availability["HSSIA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "HSSI" value = 0 min = 0 >
-                </div>
-            </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "MSE" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["MSSA"]}} Available
+                                </h5>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "MSS" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-            <div class="container">
-                <h5>These are the advanced committees: IMMUNS Advanced Committees are characteristically designed to provide a uniquely
-                    challenging experience for delegates with an existing background in debate. For delegates that are new to IMMUNS and/or MUN,
-                    the Secretariat recommends a more traditional committee in order to get the most out of our simulation.</h5>
-                <div class="form-group">
-                    <h4> Number of middle school students in advanced english committees, {{availability["MSEAA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "MSEA" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of middle school students in advanced spanish committees, {{availability["MSSAA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "MSSA" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of high school students in advanced english committees, {{availability["HSEAA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "HSEA" value = 0 min = 0 >
-                </div>
-                <div class="form-group">
-                    <h4> Number of high school students in advanced spanish committees, {{availability["HSSA"]}} available. </h4>
-                    <input type = "number" class="form-control" name = "HSSA" value = 0 min = 0 >
-                </div>
+    <br>
+    <br>
 
-                <div class="container">
-                    <div class="form-group">
-                        <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
-                    </div>
-                </div>
+    <div class="container">
+        <h3>Please note that if you decide to give any of your delegates important roles, they are expected to participate
+        more often and make more valuable contribution that will have a meaningful impact on the debate and the
+        resolution process. Being an important delegate does not equate to a higher probability of winning an
+        award, chairs will not be informed about which delegates are designated by the Secretariat as important.</h3>
 
-            </div>
-        </fieldset>
-    </form>
+        <table class="comicGreen">
+            <thead>
+                <tr>
+                    <th>Important Role</th>
+                    <th>English</th>
+                    <th>Spanish</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>High School</td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["HSEIA"]}} Available
+                                </h5>
+
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "HSEI" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["HSSIA"]}} Available
+                                </h5>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "HSSI" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Middle School</td>
+                     <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["MSEIA"]}} Available
+                                </h5>
+
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "MSEI" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["MSSIA"]}} Available
+                                </h5>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "MSSI" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <br>
+
+    <div class="container">
+        <h3>These are the advanced committees: IMMUNS Advanced Committees are characteristically designed to provide a uniquely
+            challenging experience for delegates with an existing background in debate. For delegates that are new to IMMUNS and/or MUN,
+            the Secretariat recommends a more traditional committee in order to get the most out of our simulation.</h3>
+
+        <table class="comicGreen">
+            <thead>
+                <tr>
+                    <th>Advanced Committee</th>
+                    <th>English</th>
+                    <th>Spanish</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>High School</td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["HSEAA"]}} Available
+                                </h5>
+
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "HSEA" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["HSSAA"]}} Available
+                                </h5>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "HSSA" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Middle School</td>
+                     <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["MSEAA"]}} Available
+                                </h5>
+
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "MSEA" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h5>
+                                    {{availability["MSSA"]}} Available
+                                </h5>
+                            </div>
+                            <div class="col-xs-6">
+                                <input type = "number" class="form-control" name = "MSSA" value = 0 min = 0 >
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <br>
+    <div class="container">
+        <div class="form-group">
+            <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
+        </div>
+    </div>
 </div>
+
 {% endblock %}

@@ -357,9 +357,9 @@ def user_oldTeacherPage():
         delegates = teacher.delegates
         for delegate in delegates:
             # asigns y the assignment ID in the table that corresponds to the ID of the input bar
-            assgnID = str(delegate.id)
-            # uses the assgnID of the deleagte to get name in html page input bar
-            delName = request.form[assgnID]
+            nameID = "N_" + str(delegate.id)
+            # uses the nameID of the deleagte to get name in html page input bar
+            delName = request.form[nameID]
             # checks if the input bar has a valid name input or not
             if delName == "" or delName == " ":
                 # name is put to blank if the delegate name is blank only
@@ -367,6 +367,11 @@ def user_oldTeacherPage():
             else:
                 # name is updated to the input string from the bar in teacher's table
                 delegate.name = delName
+            # use the id to get grade drop down
+            gradeID = "G_" + str(delegate.id)
+            delGrade = request.form[gradeID]
+            if delGrade != "":
+                delegate.grade = delGrade
 
         db.session.commit()
         # return the user page old with returnUserPageOld()
@@ -737,7 +742,7 @@ def admin_addNewCountry():
             numOfCountries = int(request.form["numOfCon"])
             session["numOfCountries"] = numOfCountries
             committee = Committee.query.get(int(session["addNewComitteeID"]))
-            assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID)
+            assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committee.id)
             return render_template("admin_addNewCountry.html", second=True, numOfAssignments=numOfCountries, committee=committee, assigments=assignments)
 
         ### Create assignments ###
@@ -919,7 +924,7 @@ def admin_delegatesTables():
                 delegates = db.sesion.query(Delegate).join(Teacher).filter(Teacher.school == schoolName, Delegate.name == delegateName)
                 flash("Searching for delegate with name {} in school {}".format(delegateName, schoolName))
             else:
-                delegates = Delegates.query.all()
+                delegates = Delegate.query.all()
             return render_template("admin_delegatesTables.html", delegates=delegates)
 
         listValue = value[0:3]
@@ -950,7 +955,7 @@ def admin_committeeTable():
         elif listValue == "DE_":
             delete = int(value[3:])
             committee = Committee.query.get(delete)
-            modHelpers.modHelpers.deleteAssignments(committee.assignments)
+            modHelpers.deleteAssignments(committee.assignments)
             db.session.delete(committee)
             db.session.commit()
         committees = Committee.query.all()
@@ -1022,7 +1027,7 @@ def admin_manualRegister():
             teacher = Teacher.query.get(teacherID)
             if teacher.canAddDelegate():
                 assignment = Assignment.query.get(countryID)
-                delegate = Delegate("", assignment.id, teacher.id)
+                delegate = Delegate("", assignment.id, teacher.id, "")
                 flash("You have assigned {} {} {} to {} .".format(committee.name, committee.typeOfCom, assignment.country, teacher.name))
                 db.session.add(delegate)
                 db.session.commit()
@@ -1086,7 +1091,7 @@ def admin_printCommittee():
     elif request.method == "POST" and session["adminIn"] == True:
         comName = request.form.get("committeeDropDown")
         committee = Committee.query.filter(Committee.name == comName).first()
-        return render_template("admin_printCommittee.html", first=False, second=True, committee=comName, assignments=committee.assignments, room=committee.room)
+        return render_template("admin_printCommittee.html", first=False, second=True, committee=committee, assignments=committee.assignments)
 
 
 ## /admin_changeRooms (POST -> templateRendered)

@@ -51,7 +51,7 @@
           <tbody>
             {% for delegate in delegates %}
                 <!-- Modal -->
-                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal fade" id="exampleModalCenter{{delegate.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -74,11 +74,12 @@
                 <tr>
                     <td>{{delegate.id}}</td>
                     <td>{{delegate.name}}</td>
+                    <td>{{delegate.grade}}</td>
                     <td>{{delegate.teacher.school}}</td>
                     <td>{{delegate.assignment.committee.name}}  {{delegate.assignment.committee.typeOfCom}}</td>
                     <td>{{delegate.assignment.country}}</td>
                     <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{delegate.id}}">Edit</button></td>
-                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button></td>
+                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{delegate.id}}">Delete</button></td>
                 </tr>
             {% endfor %}
           </tbody>

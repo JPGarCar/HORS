@@ -33,7 +33,7 @@
           <tbody>
             {% for committee in committees %}
               <!-- Modal -->
-                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal fade" id="exampleModalCenter{{committee.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -64,7 +64,7 @@
                     <td>{{committee.numOfImportantAssignments()}}</td>
                     <td>{{committee.numOfImportantDelegates()}}</td>
                     <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{committee.id}}">Edit</button></td>
-                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Delete</button></td>
+                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{committee.id}}">Delete</button></td>
                 </tr>
             {% endfor %}
           </tbody>
