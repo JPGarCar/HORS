@@ -191,7 +191,7 @@ body{
                         <td></td>
                         <td></td>
                         {% else %}
-                        <td>{{assignment.delegate.name}}</td>
+                        <td>{% if assignment.delegate.name == "" %} - {% else %} {{assignment.delegate.name}} {% endif %}</td>
                         <td>{{assignment.delegate.grade}}</td>
                         <td>{{assignment.delegate.teacher.school}}</td>
                         {% endif %}

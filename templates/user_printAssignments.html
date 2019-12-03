@@ -17,7 +17,7 @@
             </tr>
             {% for delegate in delegates %}
                 <tr>
-                    <td>{{delegate.assignment.committee.name}} - {{delegate.assignment.committee.typeOfCom}}</td>
+                    <td>{{delegate.assignment.committee.name}} - {{delegate.assignment.committee.typeOfCom}}{% if delegate.assignment.important == "Yes" %} - Important Country {% endif %}</td>
                     <td>{{delegate.assignment.country}}</td>
                     <td>{{delegate.name}}</td>
                     <td>{{delegate.grade}}</td>
