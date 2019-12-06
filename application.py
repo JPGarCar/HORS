@@ -508,7 +508,8 @@ def adminOne():
         ### Table with all delegates ###
         elif value == "Delegates":
             delegates = Delegate.query.all()
-            return render_template("admin_delegatesTable.html", delegates=delegates)
+            teachers = Teacher.query.all()
+            return render_template("admin_delegatesTable.html", delegates=delegates, teachers=teachers)
 
         ### Table with all committees ###
         elif value == "Committees":
@@ -911,21 +912,24 @@ def admin_delegatesTables():
     if request.method == "POST" and session["adminIn"] == True:
         value = request.form["Button"]
         if value == "Search":
-            schoolName = request.form["schoolDropDown"]
+            teacherSchoolID = request.form["schoolDropDown"]
             delegateName = request.form["delegateName"]
 
-            if schoolName == "None" and delegateName.strip() != "":
+            if teacherSchoolID == "None" and delegateName.strip() != "":
                 delegates = Delegate.query.filter(Delegate.name == delegateName).all()
                 flash("Searching for delegate with name {}".format(delegateName))
-            elif schoolName != "None" and delegateName.strip() == "":
-                delegates = db.session.query(Delegate).join(Teacher).filter(Teacher.school == schoolName).all()
+            elif teacherSchoolID != "None" and delegateName.strip() == "":
+                delegates = db.session.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID).all()
+                schoolName = db.session.query(Teacher).filter(Teacher.id == teacherSchoolID).first().school
                 flash("Searching for delegate with school {}".format(schoolName))
-            elif schoolName != "None" and delegateName.strip() != "":
-                delegates = db.sesion.query(Delegate).join(Teacher).filter(Teacher.school == schoolName, Delegate.name == delegateName)
+            elif teacherSchoolID != "None" and delegateName.strip() != "":
+                delegates = db.sesion.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID, Delegate.name == delegateName)
+                schoolName = db.session.query(Teacher).filter(Teacher.id == teacherSchoolID).first().school
                 flash("Searching for delegate with name {} in school {}".format(delegateName, schoolName))
             else:
                 delegates = Delegate.query.all()
-            return render_template("admin_delegatesTables.html", delegates=delegates)
+            teachers = Teacher.query.all()
+            return render_template("admin_delegatesTable.html", delegates=delegates, teachers=teachers)
 
         listValue = value[0:3]
         if (listValue == "ED_"):
@@ -937,7 +941,8 @@ def admin_delegatesTables():
             db.session.delete(Delegate.query.get(delete))
             db.session.commit()
         delegates = Delegate.query.all()
-        return render_template("admin_delegatesTable.html", delegates=delegates)
+        teachers = Teacher.query.all()
+        return render_template("admin_delegatesTable.html", delegates=delegates, taechers=teachers)
 
 
 ### /admin_committeeTable (POST -> templateRendered)
