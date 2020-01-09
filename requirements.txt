@@ -50,7 +50,7 @@ passlib==1.7.1
 pdfrw==0.4
 pew==1.1.2
 pexpect==4.2.1
-pillow==4.2.1
+pillow==6.2.0
 pipenv==9.0.3
 plotly==2.0.15
 ptyprocess==0.5.2
