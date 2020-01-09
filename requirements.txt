@@ -85,5 +85,5 @@ virtualenv==15.1.0
 waitress==1.1.0
 weasyprint==0.42
 webencodings==0.5.1
-werkzeug==0.12.2
+werkzeug==0.15.3
 wrapt==1.10.11
