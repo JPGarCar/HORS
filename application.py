@@ -527,7 +527,10 @@ def adminOne():
 
         ### Add New Committee ###
         elif value == "AddNewCom":
-            return render_template("admin_addNewCommittee.html", second=False)
+            typeOfCom = []
+            for com in TypeOfCom:
+                typeOfCom.append(com)
+            return render_template("admin_addNewCommittee.html", second=False, typeOfCom=typeOfCom)
 
         ### Add new Country to committee ###
         elif value == "AddNewCon":
