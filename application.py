@@ -222,8 +222,10 @@ def user_newTeacherPage():
         HSEA = helpers.assignToInt(request.form["HSEA"])
         HSSA = helpers.assignToInt(request.form["HSSA"])
 
+        G6EN = helpers.assignToInt(request.form["G6EN"])
+
         # assings 'number' number of requested delegates plus delegates already in the teacher's table
-        number = MSE + MSS + HSE + HSS + MSEI + HSEI + MSSI + HSSI + MSEA + MSSA + HSEA + HSSA + teacher.getNumOfStudents()
+        number = MSE + MSS + HSE + HSS + MSEI + HSEI + MSSI + HSSI + MSEA + MSSA + HSEA + HSSA + G6EN + teacher.getNumOfStudents()
 
         # grabs the teacher's number of students
         target = teacher.getNumOfMaxStudents()
@@ -249,6 +251,8 @@ def user_newTeacherPage():
             MSSAAvailable = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.YES.value)
             HSEAAvailable = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
             HSSAAvailable = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.YES.value)
+
+            G6ENAvailable = modHelpers.stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.NO.value)
 
             # if there are not enough assignments available adds an error to the list and does not add any assignmetns of the type
             if MSE != 0:
@@ -313,6 +317,11 @@ def user_newTeacherPage():
                     modHelpers.randomCountry(HSSA, TypeOfCom.HSSP.value, Important.NO.value, teacher, Advanced.YES.value)
                 else:
                     possErrors.append("There are not enough High School Spanish Advanced assignments, there are only " + str(HSSAAvailable) + " available. You asked for: " + str(HSSA))
+            if G6EN != 0:
+                if G6ENAvailable >= G6EN:
+                    modHelpers.randomCountry(G6EN, TypeOfCom.G6EN.value, Important.NO.value, teacher, Advanced.NO.value)
+                else:
+                    possErrors.append("There are not enough 6th grade english assignments, there are only " + str(G6ENAvailable) + " available. You asked for: " + str(G6EN))
 
             # check error list is not empty, then return same page with flash errors, else return user_oldTeacherPage()
             if len(possErrors) > 0:

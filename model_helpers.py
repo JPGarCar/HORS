@@ -152,8 +152,10 @@ def renderNewTeacherPage(teacher, numRem):
     HSEAAvailable = stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
     HSSAAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.YES.value)
 
+    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.NO.value)
+
     availability = {"MSEA" : MSEAvailable, "HSEA" : HSEAvailable, "MSSA" : MSSAvailable, "HSSA" : HSSAvailable,
                         "MSEIA" : MSEIAvailable, "HSEIA" : HSEIAvailable, "MSSIA" : MSSIAvailable, "HSSIA" : HSSIAvailable,
-                        "MSEAA" : MSEAAvailable, "MSSAA" : MSSAAvailable, "HSEAA" : HSEAAvailable, "HSSAA" : HSSAAvailable}
+                        "MSEAA" : MSEAAvailable, "MSSAA" : MSSAAvailable, "HSEAA" : HSEAAvailable, "HSSAA" : HSSAAvailable, "G6EN" : G6HSAvailable}
 
     return render_template("user_newTeacherPage.html", teacher=teacher, numRem=int(numRem), availability=availability)
