@@ -517,12 +517,12 @@ def adminOne():
         ### Table with all delegates ###
         elif value == "Delegates":
             delegates = Delegate.query.all()
-            teachers = Teacher.query.all()
+            teachers = Teacher.query.order_by(Teacher.name.asc()).all()
             return render_template("admin_delegatesTable.html", delegates=delegates, teachers=teachers)
 
         ### Table with all committees ###
         elif value == "Committees":
-            committees = Committee.query.all()
+            committees = Committee.query.order_by(Committee.name.asc()).all()
             return render_template("admin_committeeTable.html", committees=committees)
 
         ### Generate Code ###
@@ -531,7 +531,7 @@ def adminOne():
 
         ### Change room info for committees ### !!! check this
         elif value == "changeRooms":
-            committees = Committee.query.all()
+            committees = Committee.query.order_by(Committee.name.asc()).all()
             return render_template("admin_changeRooms.html", committees=committees)
 
         ### Add New Committee ###
@@ -928,14 +928,14 @@ def admin_delegatesTables():
             delegateName = request.form["delegateName"]
 
             if teacherSchoolID == "None" and delegateName.strip() != "":
-                delegates = Delegate.query.filter(Delegate.name == delegateName).all()
+                delegates = Delegate.query.filter(Delegate.name.contains(delegateName)).all()
                 flash("Searching for delegate with name {}".format(delegateName))
             elif teacherSchoolID != "None" and delegateName.strip() == "":
                 delegates = db.session.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID).all()
                 schoolName = db.session.query(Teacher).filter(Teacher.id == teacherSchoolID).first().school
                 flash("Searching for delegate with school {}".format(schoolName))
             elif teacherSchoolID != "None" and delegateName.strip() != "":
-                delegates = db.sesion.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID, Delegate.name == delegateName)
+                delegates = db.session.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID, Delegate.name.contains(delegateName))
                 schoolName = db.session.query(Teacher).filter(Teacher.id == teacherSchoolID).first().school
                 flash("Searching for delegate with name {} in school {}".format(delegateName, schoolName))
             else:

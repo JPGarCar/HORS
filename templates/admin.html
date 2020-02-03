@@ -116,7 +116,7 @@
 
     </div>
     <br>
-    <div class="container">
+    <div class="container" style="text-align:center">
         <h4>Admin user be aware that removing the delegate info from this table WILL delete the
             assignment and delegate from the teacher.</h4>
         <button class="btn btn-default" name="Button" type="submit" value="DeleteBulkInfo">Bulk Un-assign</button>
@@ -166,11 +166,11 @@
                         <td>{{assignment.committee.typeOfCom}} {% if assignment.committee.advanced == "Yes" %} Advanced {% endif %}</td>
                         <td>{{assignment.country}}</td>
                         {% if assignment.delegate == None %}
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
                         {% else %}
-                        <td>{% if assignment.delegate.name == "" %} - {% else %} {{assignment.delegate.name}} {% endif %}</td>
+                        <td>{{assignment.delegate.name}}</td>
                         <td>{{assignment.delegate.grade}}</td>
                         <td>{{assignment.delegate.teacher.school}}</td>
                         {% endif %}

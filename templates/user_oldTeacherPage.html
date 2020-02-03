@@ -7,9 +7,10 @@
 
     /* ----------- My Form ----------- */
     .myform{
-    margin:0 auto;
-    width:75%;
-    padding:2.5%;
+    margin:1%;
+    width: auto;
+    min-height: 300px;
+    padding:5%;
     }
 
 /* ----------- stylized ----------- */
@@ -18,6 +19,7 @@
     font-family: 'Playfair Display', serif;
     font-size:17px;
     }
+
          p, h1, form, button{border:0; margin:0; padding:0;}
     .spacer{clear:both; height:1px;}
 
@@ -29,21 +31,13 @@
         #stylized h1 {
     font-size:20px;
     font-weight:bold;
-    margin-bottom:5px;
-    }
-
-        #stylized p{
-    font-size:11px;
-    color:#666666;
-    margin-bottom:20px;
-    border-bottom:solid 1px #b7ddf2;
-    padding-bottom:10px;
+    margin-bottom:5%;
     }
 
         #stylized label{
     display:block;
     font-weight:bold;
-    text-align:right;
+    text-align:left;
     width:140px;
     float:left;
     }
@@ -69,8 +63,8 @@
     color:#FFFFFF;
     font-size:20px;
     font-weight:bold;
-    font-family: 'Playfair Display', serif;
     }
+
 </style>
 
 <div class="row justify-content-center">
@@ -89,38 +83,55 @@
 {% block body %}
 
 <div class="container">
-    <h4> These are your assigned delegations, please specify the name and grade of the student for each delegation.
-         Delegations marked with an asterisk are important delegations.</h4>
+    <h4> These are your assigned delegations, please specify the name and grade of the student for each delegation.</h4>
 </div>
 
 
-<div>
+<div style="text-align:center">
     <form action="/user_oldTeacherPage" method="POST">
-        <ol>
-            {% for delegate in delegates %}
-                <div id="stylized" class="myform">
-                    <li>
-                        <h1><center>{{delegate.assignment.committee.name}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == "Yes" %}  -  Important Country {% endif %} {% if delegate.assignment.committee.advanced == "Yes" %}  -  Advanced Committee {% endif %}</center></h1>
-                        <br><br>
+        <div class="container-fluid">
+            <div class="form-group">
+                <div class="row">
+                    <ol style=" list-style-type: none">
+                        {% for delegate in delegates %}
+                            <div class="col-6 col-md-4">
+                                <div id="stylized" class="myform">
+                                    <li>
+                                        <div>
+                                            <h1>{{delegate.assignment.committee.name}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == "Yes" %}  -  Important Country {% endif %}
+                                                {% if delegate.assignment.committee.advanced == "Yes" %}  -  Advanced Committee {% endif %}</h1>
+                                        </div>
+                                        <div>
+                                            <label>Student Full Name</label>
+                                            <input type="text" name="N_{{delegate.id}}" id="N_{{delegate.id}}"  class="form-control" value="{{delegate.name}}" />
 
-                        <label>Student Full Name & Last Name</label>
-                        <input type="text" name="N_{{delegate.id}}" id="N_{{delegate.id}}"  class="form-control" value="{{delegate.name}}" />
-                        <br>
+                                            <br>
 
-                        <label>Grade Level  </label> &nbsp;&nbsp;
-                        <select name="G_{{delegate.id}}" class="form-control custom-select" id="G_{{delegate.id}}">
-                            <option value="{{delegate.grade}}">{{delegate.grade}}</option>
-                            {% for grade in grades %}
-                                <option value="{{grade}}">{{grade}}</option>
-                            {% endfor %}
-                        </select>
-                    </li>
+                                            <label>Grade Level</label>
+                                            <select name="G_{{delegate.id}}" class="form-control custom-select" id="G_{{delegate.id}}">
+                                                <option value="{{delegate.grade}}">{{delegate.grade}}</option>
+                                                {% for grade in grades %}
+                                                    <option value="{{grade}}">{{grade}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                    </li>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </ol>
                 </div>
-            {% endfor %}
-        </ol>
-    	<br>
-    	<br>
-    	<center><button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button></center>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="form-group">
+        	    <div class="form-row">
+        	        <button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button>
+        	    </div>
+        	</div>
+        </div>
     </form>
 </div>
 

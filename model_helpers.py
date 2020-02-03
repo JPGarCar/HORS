@@ -25,7 +25,7 @@ def randomCountry(number, typeOfCom, important, teacher, advanced):
     # iterates until all the assignments pending are assigned
     while numAssign > 0:
         # number of countries as specified in generalList
-        maxNumInDBNow = availableAssignments(typeOfCom, important, advanced)
+        maxNumInDBNow = stillAvailable(typeOfCom, important, advanced)
         # assigns a random number to "codeID", -1 because list starts at 0
         print(maxNumInDBNow)
         if maxNumInDBNow == 1:
@@ -68,13 +68,6 @@ def stillAvailable(typeOfCom, important, advanced):
 #         db.session.commit()
 #         x = x + 1
 
-
-### availableAssignments (String String String -> Number)
-### return number of assignment available of type and Importance and advanced
-def availableAssignments(typee="HSEN", important="No", advanced="Yes"):
-    # grabs all assignments as specified
-    return db.session.query(Assignment).join(Committee).filter(Committee.typeOfCom == typee, Assignment.delegate == None, Assignment.important == important, Committee.advanced == advanced).count()
-
 ### maxAssignInGen (String String String -> Number)
 ### return number of total assignments of type and importance and advanced
 def maxAssignInGen(typee, important, advanced):
@@ -98,7 +91,7 @@ def returnAdminPage(assignments, serchParam):
 ### getComDropDownOpt (Void -> (listof String))
 ### return list of all committie names
 def getComDropDownOpt():
-    return Committee.query.all()
+    return Committee.query.order_by(Committee.name.asc()).all()
 
 
 ### returnAdminSpecialFunctions (Void -> templateRendered)
