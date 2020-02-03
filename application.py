@@ -1064,33 +1064,69 @@ def admin_stats():
     if request.method == "GET" and session["adminIn"] == True:
 
         ### Assignments available ###
-        hsenA = modHelpers.availableAssignments(TypeOfCom.HSEN.value, Important.NO.value, Advanced.NO.value)
-        hsspA = modHelpers.availableAssignments(TypeOfCom.HSSP.value, Important.NO.value, Advanced.NO.value)
-        msenA = modHelpers.availableAssignments(TypeOfCom.MSEN.value, Important.NO.value, Advanced.NO.value)
-        msspA = modHelpers.availableAssignments(TypeOfCom.MSSP.value, Important.NO.value, Advanced.NO.value)
-        mseniA = modHelpers.availableAssignments(TypeOfCom.MSEN.value, Important.YES.value, Advanced.NO.value)
-        hseniA = modHelpers.availableAssignments(TypeOfCom.HSEN.value, Important.YES.value, Advanced.NO.value)
-        msspiA = modHelpers.availableAssignments(TypeOfCom.MSSP.value, Important.YES.value, Advanced.NO.value)
-        hsspiA = modHelpers.availableAssignments(TypeOfCom.HSSP.value, Important.YES.value, Advanced.NO.value)
-        totalA = hsenA + hsspA + msenA + msspA + mseniA + hseniA + msspiA + hsspiA
+        # regular assignemnts
+        hsenA = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.NO.value)
+        hsspA = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.NO.value)
+        msenA = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.NO.value, Advanced.NO.value)
+        msspA = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.NO.value)
+
+        # important assignemnts
+        mseniA = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.YES.value, Advanced.NO.value)
+        hseniA = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.YES.value, Advanced.NO.value)
+        msspiA = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.YES.value, Advanced.NO.value)
+        hsspiA = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.NO.value)
+
+        # advanced assignemnts
+        msenaA = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.NO.value, Advanced.YES.value)
+        hsenaA = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
+        msspaA = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.YES.value)
+        hsspaA = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.YES.value)
+
+        # advanced and important assignemnts
+        msenaiA = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.YES.value, Advanced.YES.value)
+        hsenaiA = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.YES.value, Advanced.YES.value)
+        msspaiA = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.YES.value, Advanced.YES.value)
+        hsspaiA = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.YES.value)
+
+        # summation of all the available assignements
+        totalA = hsenA + hsspA + msenA + msspA + mseniA + hseniA + msspiA + hsspiA + hsenaA + hsspaA + msenaA + msspaA + msenaiA + hsenaiA + msspaiA + hsspaiA
 
         ### Assignments total ###
+        # regular assignemnts
         hsenT = modHelpers.maxAssignInGen(TypeOfCom.HSEN.value, Important.NO.value, Advanced.NO.value)
         hsspT = modHelpers.maxAssignInGen(TypeOfCom.HSSP.value, Important.NO.value, Advanced.NO.value)
         msenT = modHelpers.maxAssignInGen(TypeOfCom.MSEN.value, Important.NO.value, Advanced.NO.value)
         msspT = modHelpers.maxAssignInGen(TypeOfCom.MSSP.value, Important.NO.value, Advanced.NO.value)
+
+        # important assignemnts
         mseniT = modHelpers.maxAssignInGen(TypeOfCom.MSEN.value, Important.YES.value, Advanced.NO.value)
         hseniT = modHelpers.maxAssignInGen(TypeOfCom.HSEN.value, Important.YES.value, Advanced.NO.value)
         hsspiT = modHelpers.maxAssignInGen(TypeOfCom.HSSP.value, Important.YES.value, Advanced.NO.value)
         msspiT = modHelpers.maxAssignInGen(TypeOfCom.MSSP.value, Important.YES.value, Advanced.NO.value)
-        totalT = hsenT + hsspT + msenT + msspT + mseniT + hseniT + msspiT + hsspiT
+
+        #advanced assignemnts
+        msenaT = modHelpers.maxAssignInGen(TypeOfCom.MSEN.value, Important.NO.value, Advanced.YES.value)
+        hsenaT = modHelpers.maxAssignInGen(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
+        msspaT = modHelpers.maxAssignInGen(TypeOfCom.MSSP.value, Important.NO.value, Advanced.YES.value)
+        hsspaT = modHelpers.maxAssignInGen(TypeOfCom.HSSP.value, Important.NO.value, Advanced.YES.value)
+
+        # advanced and important assignemnts
+        msenaiT = modHelpers.maxAssignInGen(TypeOfCom.MSEN.value, Important.YES.value, Advanced.YES.value)
+        hsenaiT = modHelpers.maxAssignInGen(TypeOfCom.HSEN.value, Important.YES.value, Advanced.YES.value)
+        msspaiT = modHelpers.maxAssignInGen(TypeOfCom.MSSP.value, Important.YES.value, Advanced.YES.value)
+        hsspaiT = modHelpers.maxAssignInGen(TypeOfCom.HSSP.value, Important.YES.value, Advanced.YES.value)
+
+        totalT = hsenT + hsspT + msenT + msspT + mseniT + hseniT + msspiT + hsspiT + hsenaT + hsspaT + msenaT + msspaT + msenaiT + hsenaiT + msspaiT + hsspaiT
 
         committees = Committee.query.all()
 
         # return the template with data
         return render_template("admin_stats.html", hsenA=hsenA,hsspA=hsspA,msenA=msenA,msspA=msspA,hsenT=hsenT,
         hsspT=hsspT,msspT=msspT,msenT=msenT,totalT=totalT, totalA=totalA, mseniA=mseniA, hseniA=hseniA, mseniT=mseniT,
-        hseniT=hseniT, msspiA=msspiA, hsspiA=hsspiA, msspiT=msspiT, hsspiT=hsspiT, committees=committees)
+        hseniT=hseniT, msspiA=msspiA, hsspiA=hsspiA, msspiT=msspiT, hsspiT=hsspiT, committees=committees,
+        hsenaA=hsenaA,hsspaA=hsspaA,msenaA=msenaA,msspaA=msspaA,hsenaT=hsenaT,
+        hsspaT=hsspaT,msspaT=msspaT,msenaT=msenaT, msenaiA=msenaiA, hsenaiA=hsenaiA, msenaiT=msenaiT,
+        hsenaiT=hsenaiT, msspaiA=msspaiA, hsspaiA=hsspaiA, msspaiT=msspaiT, hsspaiT=hsspaiT)
 
 
 ### /admin_printCommittee (POST GET -> templateRendered)

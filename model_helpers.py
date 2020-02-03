@@ -49,7 +49,7 @@ def randomCountry(number, typeOfCom, important, teacher, advanced):
 
 
 ### stillAvailable (String String String -> Number)
-### return number of available assignemnts of typeOfCom and imporatnce
+### return number of available assignemnts of typeOfCom and imporatnce and advanced
 def stillAvailable(typeOfCom, important, advanced):
     # grab count of query and return
     return db.session.query(Assignment).join(Committee).filter(Committee.typeOfCom == typeOfCom, Assignment.delegate == None, Assignment.important == important, Committee.advanced == advanced).count()
@@ -137,25 +137,37 @@ def checkAutoCommitteeDelete():
 
 ### render the user_newTeacherPage.html
 def renderNewTeacherPage(teacher, numRem):
+    # regular assignments
     MSEAvailable = stillAvailable(TypeOfCom.MSEN.value, Important.NO.value, Advanced.NO.value)
     HSEAvailable = stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.NO.value)
     MSSAvailable = stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.NO.value)
     HSSAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.NO.value)
 
+    # important assignemnts
     MSEIAvailable = stillAvailable(TypeOfCom.MSEN.value, Important.YES.value, Advanced.NO.value)
     HSEIAvailable = stillAvailable(TypeOfCom.HSEN.value, Important.YES.value, Advanced.NO.value)
     MSSIAvailable = stillAvailable(TypeOfCom.MSSP.value, Important.YES.value, Advanced.NO.value)
     HSSIAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.NO.value)
 
+    # advanced assignments
     MSEAAvailable = stillAvailable(TypeOfCom.MSEN.value, Important.NO.value, Advanced.YES.value)
     MSSAAvailable = stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.YES.value)
     HSEAAvailable = stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
     HSSAAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.YES.value)
 
-    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.NO.value)
+    # advanced and important assignemnts
+    MSEAIAvailable = stillAvailable(TypeOfCom.MSEN.value, Important.YES.value, Advanced.YES.value)
+    MSSAIAvailable = stillAvailable(TypeOfCom.MSSP.value, Important.YES.value, Advanced.YES.value)
+    HSEAIAvailable = stillAvailable(TypeOfCom.HSEN.value, Important.YES.value, Advanced.YES.value)
+    HSSAIAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.YES.value)
+
+    # grade 6 assignments
+    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.YES.value)
 
     availability = {"MSEA" : MSEAvailable, "HSEA" : HSEAvailable, "MSSA" : MSSAvailable, "HSSA" : HSSAvailable,
                         "MSEIA" : MSEIAvailable, "HSEIA" : HSEIAvailable, "MSSIA" : MSSIAvailable, "HSSIA" : HSSIAvailable,
-                        "MSEAA" : MSEAAvailable, "MSSAA" : MSSAAvailable, "HSEAA" : HSEAAvailable, "HSSAA" : HSSAAvailable, "G6EN" : G6HSAvailable}
+                        "MSEAA" : MSEAAvailable, "MSSAA" : MSSAAvailable, "HSEAA" : HSEAAvailable, "HSSAA" : HSSAAvailable, "G6EN" : G6HSAvailable,
+                        "MSEAIA" : MSEAIAvailable, "MSSAIA" : MSSAIAvailable, "HSEAIA" : HSEAIAvailable, "HSSAIA" : HSSAIAvailable
+    }
 
     return render_template("user_newTeacherPage.html", teacher=teacher, numRem=int(numRem), availability=availability)

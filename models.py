@@ -125,6 +125,7 @@ class Committee(db.Model):
         self.typeOfCom = typeOfCom
         self.room = room
         self.advanced = advanced
+        self.assignments
 
     ### return number of assignments in this committee
     def numOfAssignments(self):
