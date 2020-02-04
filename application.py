@@ -349,6 +349,27 @@ def goTo():
     ### POST
     return render_template("user_signUp.html")
 
+### /userSettingsPage (POST -> templateRendered)
+### page where teachers can edit their info
+@app.route("/userSettingsPage", methods = ["POST", "GET"])
+def userSettingsPage():
+    ### POST
+    if request.method == "POST" and not session["currentTeacher"] == None:
+        teacherID = request.form["Button"]
+        teacher = Teacher.query.get(teacherID)
+        teacher.changePassword(request.form["password"])
+        teacher.email = request.form["email"]
+        teacher.school = request.form["school"]
+        flash("Changes have been made succesfully!")
+        db.session.commit()
+        return render_template("user_settingsPage.html",teacher=teacher)
+
+    ### GET
+    elif request.method == "GET" and not session["currentTeacher"] == None:
+        teacher = Teacher.query.get(session["currentUserId"])
+        return render_template("user_settingsPage.html", teacher=teacher)
+
+
 ### /user_oldTeacherPage (POST GET -> templateRendered)
 ### user page old route
 ### POST: name of student is updated if anything in input bar, else name stays as taken

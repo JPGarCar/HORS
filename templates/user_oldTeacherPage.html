@@ -66,26 +66,34 @@
     }
 
 </style>
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col col-8">
+            <form action="/logOut" method="POST" style="display: inline;">
+                <button class="btn btn-default" type="submit"> Log Out </button>
+            </form>
 
-<div class="row justify-content-center">
-    <div class="col-lg-6 col-lg-offset-5">
-        <form action="/logOut" method="POST" style="display: inline;">
-            <button class="btn btn-default" type="submit"> Log Out </button>
-        </form>
-        <form action ="/userDownload" method="POST" style="display: inline;">
-            <button class="btn btn-default" type="submit"> Download Assignments </button>
-        </form>
+            <form action ="/userDownload" method="POST" style="display: inline;">
+                <button class="btn btn-default" type="submit"> Download Assignments </button>
+            </form>
+
+            <form action ="/userSettingsPage" method="GET" style="display: inline;">
+                <button class="btn btn-default" type="submit"> Account Settings </button>
+            </form>
+        </div>
     </div>
 </div>
+
 
 {% endblock %}
 
 {% block body %}
-
+<br>
 <div class="container">
     <h4> These are your assigned delegations, please specify the name and grade of the student for each delegation.</h4>
 </div>
 
+<br><br>
 
 <div style="text-align:center">
     <form action="/user_oldTeacherPage" method="POST">
