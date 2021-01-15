@@ -207,11 +207,18 @@ def assign_helper(looking_for, type_of_committee, is_important, is_advanced, tea
         if available >= looking_for:
             modHelpers.randomCountry(looking_for, type_of_committee, is_important, teacher, is_advanced)
             return None
+        elif available != 0:
+            # assign the available assignments
+            modHelpers.randomCountry(available, type_of_committee, is_important, teacher, is_advanced)
+            return "We were only able to assign " + str(available) + " " + TypeOfCom.to_string(type_of_committee) + \
+                   (' Important' if is_important == Important.YES.value else '') + \
+                   (' Advanced' if is_advanced == Advanced.YES.value else '') + " assignments. The remaining " + \
+                   str(looking_for - available) + " assignments are still at your disposal."
         else:
             return "There are not enough " + TypeOfCom.to_string(type_of_committee) + \
                    (' Important' if is_important == Important.YES.value else '') + \
                    (' Advanced' if is_advanced == Advanced.YES.value else '') + " assignments, there are only " + \
-                    str(available) + " available. You asked for: " + str(looking_for)
+                   str(available) + " available. You asked for: " + str(looking_for)
 
 
 # /user_newTeacherPage (POST -> templateRendered)
