@@ -208,8 +208,10 @@ def assign_helper(looking_for, type_of_committee, is_important, is_advanced, tea
             modHelpers.randomCountry(looking_for, type_of_committee, is_important, teacher, is_advanced)
             return None
         else:
-            return "There are not enough" + TypeOfCom.to_string(type_of_committee) + "assignments, there are only " + \
-                   str(available) + " available. You asked for: " + str(looking_for)
+            return "There are not enough " + TypeOfCom.to_string(type_of_committee) + \
+                   (' Important' if is_important == Important.YES.value else '') + \
+                   (' Advanced' if is_advanced == Advanced.YES.value else '') + " assignments, there are only " + \
+                    str(available) + " available. You asked for: " + str(looking_for)
 
 
 # /user_newTeacherPage (POST -> templateRendered)
@@ -321,7 +323,7 @@ def user_newTeacherPage():
             # 6th grade assignments
             error_list.append(assign_helper(looking_for=G6EN, type_of_committee=TypeOfCom.G6EN.value,
                                             is_important=Important.NO.value,
-                                            is_advanced=Advanced.No.value, teacher=teacher))
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
 
             # check error list is not empty, then return same page with flash errors, else return user_oldTeacherPage()
             # will filter the list for any None values

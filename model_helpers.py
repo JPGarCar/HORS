@@ -154,7 +154,7 @@ def renderNewTeacherPage(teacher, numRem):
     HSSAIAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.YES.value)
 
     # grade 6 assignments
-    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.YES.value)
+    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.NO.value)
 
     availability = {"MSEA" : MSEAvailable, "HSEA" : HSEAvailable, "MSSA" : MSSAvailable, "HSSA" : HSSAvailable,
                         "MSEIA" : MSEIAvailable, "HSEIA" : HSEIAvailable, "MSSIA" : MSSIAvailable, "HSSIA" : HSSIAvailable,
