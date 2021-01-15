@@ -24,19 +24,17 @@
 ## mix javascript with bootstrap ##
 
 
-
-
 # import multiple packeges
 # flask for web service
 from flask import Flask, redirect, render_template, request, url_for, session, flash, send_file
 # flask-login
-#from flask_login import LoginManager, login_required
+# from flask_login import LoginManager, login_required
 # for the random assignment generator
 import random
 # basic math needed
 import math
 # for sentry issue resolver
-#from raven.contrib.flask import Sentry
+# from raven.contrib.flask import Sentry
 # for pasword hashing
 from passlib.apps import custom_app_context as pwd_context
 # for the random string in the special code
@@ -44,7 +42,6 @@ import string
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
-
 
 # defines variable 'app' to the flask
 app = Flask(__name__)
@@ -54,7 +51,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
 app.config["SQLALCHEMY_ECHO"] = False
 
 db = SQLAlchemy(app)
-
 
 import helpers
 import model_helpers as modHelpers
@@ -68,11 +64,12 @@ if session:
     session.clear()
     session.pop('_flashes', None)
 
-#login_manager = LoginManager()
-#login_manager.init_app(app)
+
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 # assing sentry its code to connect to account
-#sentry = Sentry(app, dsn='https://effbb4c86ee440eebbb9f8d2de12cd6f:e32dca8980a440e699031e80789d3a06@sentry.io/1238266')
+# sentry = Sentry(app, dsn='https://effbb4c86ee440eebbb9f8d2de12cd6f:e32dca8980a440e699031e80789d3a06@sentry.io/1238266')
 
 ##### no globals are used, instead the session module from flask is used, it uses cookies so that is way better.
 
@@ -91,7 +88,7 @@ if session:
 ### main route to the sign in page,
 ### GET: returns the registration template
 ### POST: signs in a teacher if email and password match or sign admin
-@app.route("/", methods = ["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def user_registration():
     ### GET
     if request.method == "GET":
@@ -103,7 +100,8 @@ def user_registration():
         session["currentTeacher"] = None
 
         ### Check In Admin ###
-        if request.form["signInEmail"] == "admin@gmail.com" and pwd_context.verify(request.form["signInPassword"], pwd_context.hash("adminPassword")):
+        if request.form["signInEmail"] == "admin@gmail.com" and pwd_context.verify(request.form["signInPassword"],
+                                                                                   pwd_context.hash("adminPassword")):
             session["adminIn"] = True
             return modHelpers.returnAdminPage("", None)
 
@@ -120,7 +118,7 @@ def user_registration():
                     session["currentTeacher"] = teacher.getTeacherSession()
                     session["currentUserId"] = teacher.id
                     # log in user for Flask-Login
-                    #login_user(teacher)
+                    # login_user(teacher)
                     # variable "numDelOfTeacher" has the number from sepcial code
                     numDelOfTeacher = teacher.getNumOfMaxStudents()
                     # assign assignments in current teacher
@@ -132,10 +130,12 @@ def user_registration():
                     else:
                         # assigns 'numRem' the number of delegates remainging
                         numRem = numDelOfTeacher - numNow
-                        return modHelpers.renderNewTeacherPage(teacher,numRem)
-            flash("You have entered an incorrect password, please try again. If the problem persists, call your HOSPITALITY member for asistance.")
+                        return modHelpers.renderNewTeacherPage(teacher, numRem)
+            flash(
+                "You have entered an incorrect password, please try again. If the problem persists, call your HOSPITALITY member for asistance.")
             return render_template("user_registration.html")
-        flash("You have entered an incorrect email, please try again. If the problem persists, call your HOSPITALITY member for asistance.")
+        flash(
+            "You have entered an incorrect email, please try again. If the problem persists, call your HOSPITALITY member for asistance.")
         return render_template("user_registration.html")
 
 
@@ -143,7 +143,7 @@ def user_registration():
 ### user_signUp reoute to sign up a new teacher
 ### GET: returns the user_signUp template
 ### POST: checks if all fields are filled and correct and makes the new teacher
-@app.route("/user_signUp", methods = ["POST", "GET"])
+@app.route("/user_signUp", methods=["POST", "GET"])
 def user_signUp():
     ### GET
     if request.method == "GET":
@@ -161,11 +161,12 @@ def user_signUp():
         else:
             ### Check Email Availability ###
             # checks if email is already in table
-            email = Teacher.query.filter_by(email = request.form["email"]).first()
+            email = Teacher.query.filter_by(email=request.form["email"]).first()
 
             # if email inputed is already in use return same page with flash error
             if email is not None:
-                flash("The email you have entered is already in use. If you do not remember your password please contact your HOSPITALITY member.")
+                flash(
+                    "The email you have entered is already in use. If you do not remember your password please contact your HOSPITALITY member.")
                 return render_template("user_signUp.html")
 
             ### Check Passwords Match ###
@@ -174,17 +175,20 @@ def user_signUp():
                 return render_template("user_signUp.html")
 
             ### Adding teacher ###
-            teacher = Teacher(request.form["personName"],request.form["email"], pwd_context.hash(request.form["password"]), request.form["school"], request.form["confirmationCode"])
+            teacher = Teacher(request.form["personName"], request.form["email"],
+                              pwd_context.hash(request.form["password"]), request.form["school"],
+                              request.form["confirmationCode"])
             db.session.add(teacher)
             db.session.commit()
             # return template user_signUpSuccess
             return render_template("user_signUpSuccess.html")
 
+
 ### /user_signUpSuccess (GET POST -> templateRendered)
 ### user_signUpSuccess route, simple node
 ### GET: returns the user_signUpSuccess template
 ### POST: returnes the teacher to registration template
-@app.route("/user_signUpSuccess", methods = ["POST", "GET"])
+@app.route("/user_signUpSuccess", methods=["POST", "GET"])
 def user_signUpSuccess():
     ### POST
     if request.method == "POST":
@@ -194,15 +198,36 @@ def user_signUpSuccess():
     else:
         return render_template("user_signUpSuccess.html")
 
-### /user_newTeacherPage (POST -> templateRendered)
-### user_newTeacherPage route, for the new teachers that need to select the number of assignments
-### POST: let teachers select number of assignments limited to their code limit
-@app.route("/user_newTeacherPage", methods = ["POST"])
-#@login_required
+
+# Helper Function
+# USAGE: Will assign a country to a teacher or return a message error
+def assign_helper(looking_for, type_of_committee, is_important, is_advanced, teacher):
+    if looking_for != 0:
+        available = modHelpers.stillAvailable(typeOfCom=type_of_committee, important=is_important, advanced=is_advanced)
+        if available >= looking_for:
+            modHelpers.randomCountry(looking_for, type_of_committee, is_important, teacher, is_advanced)
+            return None
+        elif available != 0:
+            # assign the available assignments
+            modHelpers.randomCountry(available, type_of_committee, is_important, teacher, is_advanced)
+            return "We were only able to assign " + str(available) + " " + TypeOfCom.to_string(type_of_committee) + \
+                   (' Important' if is_important == Important.YES.value else '') + \
+                   (' Advanced' if is_advanced == Advanced.YES.value else '') + " assignments. The remaining " + \
+                   str(looking_for - available) + " assignments are still at your disposal."
+        else:
+            return "There are not enough " + TypeOfCom.to_string(type_of_committee) + \
+                   (' Important' if is_important == Important.YES.value else '') + \
+                   (' Advanced' if is_advanced == Advanced.YES.value else '') + " assignments, there are only " + \
+                   str(available) + " available. You asked for: " + str(looking_for)
+
+
+# /user_newTeacherPage (POST -> templateRendered)
+# user_newTeacherPage route, for the new teachers that need to select the number of assignments
+# POST: let teachers select number of assignments limited to their code limit
+@app.route("/user_newTeacherPage", methods=["POST"])
+# @login_required
 def user_newTeacherPage():
-    ### POST
-    # check post and that session has data to be used
-    if request.method == "POST" and not session["currentTeacher"] == None:
+    if request.method == "POST" and not session["currentTeacher"] is None:
         # grab teacher that is signed in
         teacher = Teacher.query.get(session["currentUserId"])
 
@@ -222,121 +247,109 @@ def user_newTeacherPage():
         HSEA = helpers.assignToInt(request.form["HSEA"])
         HSSA = helpers.assignToInt(request.form["HSSA"])
 
+        MSEAI = helpers.assignToInt(request.form["MSEAI"])
+        MSSAI = helpers.assignToInt(request.form["MSSAI"])
+        HSEAI = helpers.assignToInt(request.form["HSEAI"])
+        HSSAI = helpers.assignToInt(request.form["HSSAI"])
+
         G6EN = helpers.assignToInt(request.form["G6EN"])
 
         # assings 'number' number of requested delegates plus delegates already in the teacher's table
-        number = MSE + MSS + HSE + HSS + MSEI + HSEI + MSSI + HSSI + MSEA + MSSA + HSEA + HSSA + G6EN + teacher.getNumOfStudents()
+        number = MSE + MSS + HSE + HSS + MSEI + HSEI + MSSI + HSSI + MSEA + MSSA + \
+                 HSEA + HSSA + G6EN + MSEAI + MSSAI + HSEAI + HSSAI + teacher.getNumOfStudents()
 
         # grabs the teacher's number of students
         target = teacher.getNumOfMaxStudents()
 
-        # goes over all the requested delegates checking there are requested of such type and there are remeaining in generalList
+        # goes over all the requested delegates checking there are requested of such type
+        # and there are remaining in generalList
         # if true, then calls randomCountry() to assign the assignment
-        if  number == target:
+        if number == target:
             # list for possible error messages
-            possErrors = []
+            error_list = []
 
-            # available assigments of corresponding type
-            MSEAvailable = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.NO.value, Advanced.NO.value)
-            HSEAvailable = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.NO.value)
-            MSSAvailable = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.NO.value)
-            HSSAvailable = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.NO.value)
+            # if there are not enough assignments available adds an error to the list and
+            # does not add any assignments of the type
 
-            MSEIAvailable = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.YES.value, Advanced.NO.value)
-            HSEIAvailable = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.YES.value, Advanced.NO.value)
-            MSSIAvailable = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.YES.value, Advanced.NO.value)
-            HSSIAvailable = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.NO.value)
+            # regular committees
+            error_list.append(assign_helper(looking_for=MSE, type_of_committee=TypeOfCom.MSEN.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=MSS, type_of_committee=TypeOfCom.MSSP.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSE, type_of_committee=TypeOfCom.HSEN.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSS, type_of_committee=TypeOfCom.HSSP.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
 
-            MSEAAvailable = modHelpers.stillAvailable(TypeOfCom.MSEN.value, Important.NO.value, Advanced.YES.value)
-            MSSAAvailable = modHelpers.stillAvailable(TypeOfCom.MSSP.value, Important.NO.value, Advanced.YES.value)
-            HSEAAvailable = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
-            HSSAAvailable = modHelpers.stillAvailable(TypeOfCom.HSSP.value, Important.NO.value, Advanced.YES.value)
+            # important assignments in regular committees
+            error_list.append(assign_helper(looking_for=MSEI, type_of_committee=TypeOfCom.MSEN.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=MSSI, type_of_committee=TypeOfCom.MSSP.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSEI, type_of_committee=TypeOfCom.HSEN.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSSI, type_of_committee=TypeOfCom.HSSP.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
 
-            G6ENAvailable = modHelpers.stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.NO.value)
+            # advanced committees
+            error_list.append(assign_helper(looking_for=MSEA, type_of_committee=TypeOfCom.MSEN.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=MSSA, type_of_committee=TypeOfCom.MSSP.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSEA, type_of_committee=TypeOfCom.HSEN.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSSA, type_of_committee=TypeOfCom.HSSP.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
 
-            # if there are not enough assignments available adds an error to the list and does not add any assignmetns of the type
-            if MSE != 0:
-                if MSEAvailable >= MSE:
-                    modHelpers.randomCountry(MSE, TypeOfCom.MSEN.value, Important.NO.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough Middle School English assignments, there are only " + str(MSEAvailable) + " available. You asked for: " + str(MSE))
-            if MSS != 0:
-                if MSSAvailable >= MSS:
-                    modHelpers.randomCountry(MSS, TypeOfCom.MSSP.value, Important.NO.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough Middle School Spanish assignments, there are only " + str(MSSAvailable) + " available. You asked for: " + str(MSS))
-            if HSE != 0:
-                if HSEAvailable >= HSE:
-                    modHelpers.randomCountry(HSE, TypeOfCom.HSEN.value, Important.NO.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough High School English assignments, there are only " + str(HSEAvailable) + " available. You asked for: " + str(HSE))
-            if HSS != 0:
-                if HSSAvailable >= HSS:
-                    modHelpers.randomCountry(HSS, TypeOfCom.HSSP.value, Important.NO.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough High School Spanish assignments, there are only " + str(HSSAvailable) + " available. You asked for: " + str(HSS))
+            # important assignments in advanced committees
+            error_list.append(assign_helper(looking_for=MSEAI, type_of_committee=TypeOfCom.MSEN.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=MSSAI, type_of_committee=TypeOfCom.MSSP.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSEAI, type_of_committee=TypeOfCom.HSEN.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
+            error_list.append(assign_helper(looking_for=HSSAI, type_of_committee=TypeOfCom.HSSP.value,
+                                            is_important=Important.YES.value,
+                                            is_advanced=Advanced.YES.value, teacher=teacher))
 
-            if HSEI != 0:
-                if HSEIAvailable >= HSEI:
-                    modHelpers.randomCountry(HSEI, TypeOfCom.HSEN.value, Important.YES.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough High School English Important assignments, there are only " + str(HSEIAvailable) + " available. You asked for: " + str(HSEI))
-            if MSEI != 0:
-                if MSEIAvailable >= MSEI:
-                    modHelpers.randomCountry(MSEI, TypeOfCom.MSEN.value, Important.YES.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough Middle School English Important assignments, there are only " + str(MSEIAvailable) + " available. You asked for: " + str(MSEI))
-            if MSSI != 0:
-                if MSSIAvailable >= MSSI:
-                    modHelpers.randomCountry(MSSI, TypeOfCom.MSSP.value, Important.YES.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough Middle School Spanish Important assignments, there are only " + str(MSSIAvailable) + " available. You asked for: " + str(MSSI))
-            if HSSI != 0:
-                if HSSIAvailable >= HSSI:
-                    modHelpers.randomCountry(HSSI, TypeOfCom.HSSP.value, Important.YES.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough High School Spanish Important assignments, there are only " + str(HSSIAvailable) + " available. You asked for: " + str(HSSI))
-
-            if MSEA != 0:
-                if MSEAAvailable >= MSEA:
-                    modHelpers.randomCountry(MSEA, TypeOfCom.MSEN.value, Important.NO.value, teacher, Advanced.YES.value)
-                else:
-                    possErrors.append("There are not enough Middle School English Advanced assignments, there are only " + str(MSEAAvailable) + " available. You asked for: " + str(MSEA))
-            if MSSA != 0:
-                if MSSAAvailable >= MSSA:
-                    modHelpers.randomCountry(MSSA, TypeOfCom.MSSP.value, Important.NO.value, teacher, Advanced.YES.value)
-                else:
-                    possErrors.append("There are not enough Middle School Spanish Advanced assignments, there are only " + str(MSSAAvailable) + " available. You asked for: " + str(MSSA))
-            if HSEA != 0:
-                if HSEAAvailable >= HSEA:
-                    modHelpers.randomCountry(HSEA, TypeOfCom.HSEN.value, Important.NO.value, teacher, Advanced.YES.value)
-                else:
-                    possErrors.append("There are not enough High School English Advanced assignments, there are only " + str(HSEAAvailable) + " available. You asked for: " + str(HSEA))
-            if HSSA != 0:
-                if HSSAAvailable >= HSSA:
-                    modHelpers.randomCountry(HSSA, TypeOfCom.HSSP.value, Important.NO.value, teacher, Advanced.YES.value)
-                else:
-                    possErrors.append("There are not enough High School Spanish Advanced assignments, there are only " + str(HSSAAvailable) + " available. You asked for: " + str(HSSA))
-            if G6EN != 0:
-                if G6ENAvailable >= G6EN:
-                    modHelpers.randomCountry(G6EN, TypeOfCom.G6EN.value, Important.NO.value, teacher, Advanced.NO.value)
-                else:
-                    possErrors.append("There are not enough 6th grade english assignments, there are only " + str(G6ENAvailable) + " available. You asked for: " + str(G6EN))
+            # 6th grade assignments
+            error_list.append(assign_helper(looking_for=G6EN, type_of_committee=TypeOfCom.G6EN.value,
+                                            is_important=Important.NO.value,
+                                            is_advanced=Advanced.NO.value, teacher=teacher))
 
             # check error list is not empty, then return same page with flash errors, else return user_oldTeacherPage()
-            if len(possErrors) > 0:
-                for error in range(0,len(possErrors)):
-                    flash("All the assignments have been added to your account except for:")
-                    flash(possErrors[error])
-                numRem = target - teacher.getNumOfStudents()
-                return modHelpers.renderNewTeacherPage(session["currentTeacher"], numRem)
+            # will filter the list for any None values
+            error_list = list(filter(None, error_list))
+            if len(error_list) > 0:
+                flash("Some assignments have been added but we have some issues:")
+                for error in range(0, len(error_list)):
+                    flash(error_list[error])
+                num_rem = target - teacher.getNumOfStudents()
+                return modHelpers.renderNewTeacherPage(session["currentTeacher"], num_rem)
             else:
                 return teacher.returnUserPageOld()
         else:
             # if incorrect number of assignments, return same page with number of assignments remeaining
-            numRem = target - teacher.getNumOfStudents()
-            flash("You have entered an incorrect number of assignments, please try again you have {} delegates to assign.".format(numRem))
-            return modHelpers.renderNewTeacherPage(session["currentTeacher"], numRem)
+            num_rem = target - teacher.getNumOfStudents()
+            flash(
+                "You have entered an incorrect number of assignments, please try again you have {} delegates to assign.".format(
+                    num_rem))
+            return modHelpers.renderNewTeacherPage(session["currentTeacher"], num_rem)
 
     flash("An error was encountered please log in again. If the error persists call your HOSPITALITY member.")
     return render_template("user_registration.html")
@@ -344,14 +357,15 @@ def user_newTeacherPage():
 
 ### /goTo (POST -> templateRendered)
 ### goTo route, takes to the singUp template used after the teacher registers only has POST for button click
-@app.route("/goTo", methods = ["POST"])
+@app.route("/goTo", methods=["POST"])
 def goTo():
     ### POST
     return render_template("user_signUp.html")
 
+
 ### /userSettingsPage (POST -> templateRendered)
 ### page where teachers can edit their info
-@app.route("/userSettingsPage", methods = ["POST", "GET"])
+@app.route("/userSettingsPage", methods=["POST", "GET"])
 def userSettingsPage():
     ### POST
     if request.method == "POST" and not session["currentTeacher"] == None:
@@ -362,7 +376,7 @@ def userSettingsPage():
         teacher.school = request.form["school"]
         flash("Changes have been made succesfully!")
         db.session.commit()
-        return render_template("user_settingsPage.html",teacher=teacher)
+        return render_template("user_settingsPage.html", teacher=teacher)
 
     ### GET
     elif request.method == "GET" and not session["currentTeacher"] == None:
@@ -374,10 +388,9 @@ def userSettingsPage():
 ### user page old route
 ### POST: name of student is updated if anything in input bar, else name stays as taken
 ### GET: the program returns the user_oldTeacherPage()
-@app.route("/user_oldTeacherPage", methods = ["POST", "GET"])
-#@login_required
+@app.route("/user_oldTeacherPage", methods=["POST", "GET"])
+# @login_required
 def user_oldTeacherPage():
-
     ### POST
     if request.method == "POST" and not session["currentTeacher"] == None:
         # grab teacher that is logged in
@@ -418,7 +431,7 @@ def user_oldTeacherPage():
 ### return printable html file with all the teacher's info
 ### POST: render user_printAssignments.html with teacher's info
 @app.route("/userDownload", methods=["POST"])
-#@login_required
+# @login_required
 def userDownload():
     ### POST
     if request.method == "POST" and not session["currentTeacher"] == None:
@@ -441,7 +454,7 @@ def logOut():
     if session:
         session.clear()
         session.pop('_flashes', None)
-    #logout_user()
+    # logout_user()
     return render_template("user_registration.html")
 
 
@@ -477,12 +490,14 @@ def adminOne():
 
         ### General Filter Buttons ###
         if value == "MS":
-            assignments = db.session.query(Assignment).join(Committee).filter(or_(Committee.typeOfCom == TypeOfCom.MSEN.value, Committee.typeOfCom == TypeOfCom.MSSP.value)).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                or_(Committee.typeOfCom == TypeOfCom.MSEN.value, Committee.typeOfCom == TypeOfCom.MSSP.value)).all()
             session["admingCurrentTable"] = " AND (typeOfCom = 'MS EN' OR typeOfCom = 'MS SP')"
             genFilter = "MS"
             return modHelpers.returnAdminPage(assignments, genFilter)
         elif value == "HS":
-            assignments = db.session.query(Assignment).join(Committee).filter(or_(Committee.typeOfCom == TypeOfCom.HSEN.value, Committee.typeOfCom == TypeOfCom.HSSP.value)).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                or_(Committee.typeOfCom == TypeOfCom.HSEN.value, Committee.typeOfCom == TypeOfCom.HSSP.value)).all()
             session["admingCurrentTable"] = " AND (typeOfCom = 'HS EN' OR typeOfCom = 'HS SP')"
             genFilter = "HS"
             return modHelpers.returnAdminPage(assignments, genFilter)
@@ -490,32 +505,38 @@ def adminOne():
             session["admingCurrentTable"] = ""
             return modHelpers.returnAdminPage("", None)
         elif value == "English":
-            assignments = db.session.query(Assignment).join(Committee).filter(or_(Committee.typeOfCom == TypeOfCom.HSEN.value, Committee.typeOfCom == TypeOfCom.MSEN.value)).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                or_(Committee.typeOfCom == TypeOfCom.HSEN.value, Committee.typeOfCom == TypeOfCom.MSEN.value)).all()
             session["admingCurrentTable"] = " AND (typeOfCom = 'HS EN' OR typeOfCom = 'MS EN')"
             genFilter = "English"
             return modHelpers.returnAdminPage(assignments, genFilter)
         elif value == "Spanish":
-            assignments = db.session.query(Assignment).join(Committee).filter(or_(Committee.typeOfCom == TypeOfCom.HSSP.value, Committee.typeOfCom == TypeOfCom.MSSP.value)).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                or_(Committee.typeOfCom == TypeOfCom.HSSP.value, Committee.typeOfCom == TypeOfCom.MSSP.value)).all()
             session["admingCurrentTable"] = " AND (typeOfCom = 'HS SP' OR typeOfCom = 'MS SP')"
             genFilter = "Spanish"
             return modHelpers.returnAdminPage(assignments, genFilter)
         elif value == "HSEN":
-            assignments = db.session.query(Assignment).join(Committee).filter(Committee.typeOfCom == TypeOfCom.HSEN.value).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                Committee.typeOfCom == TypeOfCom.HSEN.value).all()
             session["admingCurrentTable"] = " AND typeOfCom = 'HS EN'"
             genFilter = TypeOfCom.HSEN.value
             return modHelpers.returnAdminPage(assignments, genFilter)
         elif value == "HSSP":
-            assignments = db.session.query(Assignment).join(Committee).filter(Committee.typeOfCom == TypeOfCom.HSSP.value).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                Committee.typeOfCom == TypeOfCom.HSSP.value).all()
             session["admingCurrentTable"] = " AND typeOfCom = 'HS SP'"
             genFilter = TypeOfCom.HSSP.value
             return modHelpers.returnAdminPage(assignments, genFilter)
         elif value == "MSEN":
-            assignments = db.session.query(Assignment).join(Committee).filter(Committee.typeOfCom == TypeOfCom.MSEN.value).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                Committee.typeOfCom == TypeOfCom.MSEN.value).all()
             session["admingCurrentTable"] = " AND typeOfCom = 'MS EN'"
             genFilter = TypeOfCom.MSEN.value
             return modHelpers.returnAdminPage(assignments, genFilter)
         elif value == "MSSP":
-            assignments = db.session.query(Assignment).join(Committee).filter(Committee.typeOfCom == TypeOfCom.MSSP.value).all()
+            assignments = db.session.query(Assignment).join(Committee).filter(
+                Committee.typeOfCom == TypeOfCom.MSSP.value).all()
             session["admingCurrentTable"] = " AND typeOfCom = 'MS SP'"
             genFilter = TypeOfCom.MSSP.value
             return modHelpers.returnAdminPage(assignments, genFilter)
@@ -533,7 +554,7 @@ def adminOne():
         ### Table with teachers data ###
         elif value == "Teachers":
             teachers = Teacher.query.all()
-            return render_template("admin_teachersTable.html",teachers=teachers)
+            return render_template("admin_teachersTable.html", teachers=teachers)
 
         ### Table with all delegates ###
         elif value == "Delegates":
@@ -568,7 +589,8 @@ def adminOne():
             session["addNewComitteeID"] = comID
             committee = Committee.query.get(comID)
             assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID)
-            return render_template("admin_addNewCountry.html", committee=committee, second=False, assignments=assignments)
+            return render_template("admin_addNewCountry.html", committee=committee, second=False,
+                                   assignments=assignments)
 
         ### Delete info of all selected rows(assignments) ###
         elif value == "DeleteBulkInfo":
@@ -576,7 +598,8 @@ def adminOne():
             for row in rowIds:
                 assignment = Assignment.query.get(int(row))
                 if assignment.delegate is not None:
-                    flash("The following committe/country has been stripped of delegate info: {} / {}".format(assignment.committee.name,assignment.country))
+                    flash("The following committe/country has been stripped of delegate info: {} / {}".format(
+                        assignment.committee.name, assignment.country))
                     db.session.delete(assignment.delegate)
             # commit all deletes
             db.session.commit()
@@ -586,11 +609,12 @@ def adminOne():
             rowIds = request.form.getlist("Selected")
             for row in rowIds:
                 assignment = Assignment.query.get(int(row))
-                flash("The following committe/country and its delegate has been deleted: {} / {}".format(assignment.committee.name, assignment.country))
+                flash("The following committe/country and its delegate has been deleted: {} / {}".format(
+                    assignment.committee.name, assignment.country))
                 # if assignment is realted to delegate, must delete delegate first
                 modHelpers.deleteAssignment(assignment)
                 modHelpers.checkAutoCommitteeDelete()
-            #idArange(Assignment)
+            # idArange(Assignment)
 
         ### Search parameters ###
         elif value == "Search":
@@ -600,7 +624,6 @@ def adminOne():
             else:
                 comID = int(com)
                 isCommitteeSelected = True
-
 
             conName = request.form["countryField"]
             if conName != "":
@@ -614,25 +637,29 @@ def adminOne():
                 isNotTaken = False
 
             if isCommitteeSelected and isCountrySelected and isNotTaken:
-                assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID, Assignment.country == conName, Assignment.delegate == None,).all()
-                message = "Committee : {} , Country : {} , Not Taken".format(assignments[0].committee.name , conName)
+                assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID,
+                                                                                  Assignment.country == conName,
+                                                                                  Assignment.delegate == None, ).all()
+                message = "Committee : {} , Country : {} , Not Taken".format(assignments[0].committee.name, conName)
             elif not isCommitteeSelected and isCountrySelected and isNotTaken:
-                assignments= Assignment.query.filter(Assignment.country == conName , Assignment.delegate == None).all()
+                assignments = Assignment.query.filter(Assignment.country == conName, Assignment.delegate == None).all()
                 message = "Country : {} , Not Taken".format(conName)
             elif isCommitteeSelected and not isCountrySelected and isNotTaken:
-                assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID, Assignment.delegate == None).all()
+                assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID,
+                                                                                  Assignment.delegate == None).all()
                 message = "Committee : {} , Not Taken".format(assignments[0].committee.name)
             elif isCommitteeSelected and isCountrySelected and not isNotTaken:
-                assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID, Assignment.country == conName).all()
-                message = "Committee : {} , Country : {}".format(assignments[0].committee.name , conName)
+                assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID,
+                                                                                  Assignment.country == conName).all()
+                message = "Committee : {} , Country : {}".format(assignments[0].committee.name, conName)
             elif not isCommitteeSelected and not isCountrySelected and isNotTaken:
-                assignments= Assignment.query.filter(Assignment.delegate == None).all()
+                assignments = Assignment.query.filter(Assignment.delegate == None).all()
                 message = "Not Taken"
             elif isCommitteeSelected and not isCountrySelected and not isNotTaken:
                 assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == comID).all()
                 message = "Committee : {}".format(assignments[0].committee.name)
             elif (not isCommitteeSelected) and isCountrySelected and (not isNotTaken):
-                assignments= Assignment.query.filter(Assignment.country == conName).all()
+                assignments = Assignment.query.filter(Assignment.country == conName).all()
                 message = "Country : {}".format(conName)
             else:
                 assignments = Assignment.query.all()
@@ -648,7 +675,8 @@ def adminOne():
             if assignment.delegate is not None:
                 db.session.delete(assignment.delegate)
             db.session.commit()
-            flash("The following committe/country has been stripped of delegate info: {} / {}".format(assignment.committee.name, assignment.country))
+            flash("The following committe/country has been stripped of delegate info: {} / {}".format(
+                assignment.committee.name, assignment.country))
 
         # Edite Row
         elif (listValue == "Ed_"):
@@ -660,9 +688,10 @@ def adminOne():
         elif (listValue == "DR_"):
             deleteRow = value[3:]
             assignment = Assignment.query.get(int(deleteRow))
-            flash("The following committe/country has been deleted: {} / {}".format(assignment.committee.name, assignment.country))
+            flash("The following committe/country has been deleted: {} / {}".format(assignment.committee.name,
+                                                                                    assignment.country))
             modHelpers.deleteAssignment(assignment)
-            #idArange("generalList")
+            # idArange("generalList")
             modHelpers.checkAutoCommitteeDelete()
 
         return modHelpers.returnAdminPage("", None)
@@ -680,7 +709,7 @@ def admin_editAssignment():
         con = request.form["country"]
         idx = int(request.form["Button"])
 
-        #grab assignment to deal with
+        # grab assignment to deal with
         assignment = Assignment.query.get(idx)
 
         assignment.country = con
@@ -688,10 +717,12 @@ def admin_editAssignment():
         # use .get() because value might be None or not there
         if request.form.get("Important") == "on":
             assignment.important = Important.YES.value
-            flash("The following has changed: {} = {} , {} = {}.".format(assignment.country, con, assignment.important, Important.YES.value))
+            flash("The following has changed: {} = {} , {} = {}.".format(assignment.country, con, assignment.important,
+                                                                         Important.YES.value))
 
         else:
-            flash("The following has changed: {} = {} , {} = {} .".format(assignment.country, con, assignment.important, Important.NO.value))
+            flash("The following has changed: {} = {} , {} = {} .".format(assignment.country, con, assignment.important,
+                                                                          Important.NO.value))
 
         db.session.commit()
         return modHelpers.returnAdminPage("", None)
@@ -714,7 +745,9 @@ def admin_generateCode():
             secondnum = int(totalnum / 10)
             genfirst = math.ceil((firstnum + 10) * 3)
             gensecond = math.ceil((secondnum + 10) * 3)
-            return render_template("admin_generateCode.html", code=(str(gensecond) + "".join(random.choice(string.ascii_uppercase) for x in range(4)) + str(genfirst) + "".join(random.choice(string.ascii_uppercase) for x in range(2))))
+            return render_template("admin_generateCode.html", code=(
+                    str(gensecond) + "".join(random.choice(string.ascii_uppercase) for x in range(4)) + str(
+                genfirst) + "".join(random.choice(string.ascii_uppercase) for x in range(2))))
         return render_template("admin_generateCode.html", code="")
 
 
@@ -742,7 +775,8 @@ def admin_addNewCommittee():
             x = int(request.form["number"])
             session["numberOfAssignments"] = x
 
-            return render_template("admin_addNewCommittee.html", second=True, numberOfAssignments=x, committee=committee.name, typeOfCom=committee.typeOfCom)
+            return render_template("admin_addNewCommittee.html", second=True, numberOfAssignments=x,
+                                   committee=committee.name, typeOfCom=committee.typeOfCom)
 
         ### Create assignments ###
         if value == "populate":
@@ -751,13 +785,13 @@ def admin_addNewCommittee():
             committeeAmount = committee.numOfAssignments()
             for num in range(int(session["numberOfAssignments"])):
                 country = request.form.get(str(num))
-                important = request.form.get("I"+ str(num))
+                important = request.form.get("I" + str(num))
                 if important != None:
                     db.session.add(Assignment(committee.id, country, committeeAmount + num + 1, Important.YES.value))
                 else:
                     db.session.add(Assignment(committee.id, country, committeeAmount + num + 1, Important.NO.value))
             db.session.commit()
-            #idArange(Assignment)
+            # idArange(Assignment)
             return modHelpers.returnAdminPage("", None)
     return modHelpers.returnAdminPage("", None)
 
@@ -777,7 +811,8 @@ def admin_addNewCountry():
             session["numOfCountries"] = numOfCountries
             committee = Committee.query.get(int(session["addNewComitteeID"]))
             assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committee.id)
-            return render_template("admin_addNewCountry.html", second=True, numOfAssignments=numOfCountries, committee=committee, assigments=assignments)
+            return render_template("admin_addNewCountry.html", second=True, numOfAssignments=numOfCountries,
+                                   committee=committee, assigments=assignments)
 
         ### Create assignments ###
         if value == "populate":
@@ -786,13 +821,13 @@ def admin_addNewCountry():
             committeeAmount = committee.numOfAssignments()
             for num in range(session["numOfCountries"]):
                 country = request.form.get(str(num))
-                important = request.form.get("I"+ str(num))
+                important = request.form.get("I" + str(num))
                 if important != None:
                     db.session.add(Assignment(committee.id, country, committeeAmount + num + 1, Important.YES.value))
                 else:
                     db.session.add(Assignment(committee.id, country, committeeAmount + num + 1, Important.NO.value))
             db.session.commit()
-            #idArange("generalList")
+            # idArange("generalList")
             return modHelpers.returnAdminPage("", None)
     return modHelpers.returnAdminPage("", None)
 
@@ -816,10 +851,12 @@ def admin_teachersTable():
                 db.session.delete(delegate)
             db.session.delete(teacher)
 
-            flash("The table of {} from school {} has been deleted, her info wiped and all her assignments destroyed.".format(teacher.name, teacher.school))
+            flash(
+                "The table of {} from school {} has been deleted, her info wiped and all her assignments destroyed.".format(
+                    teacher.name, teacher.school))
             db.session.commit()
             teachers = Teacher.query.all()
-            return render_template("admin_teachersTable.html",teachers=teachers)
+            return render_template("admin_teachersTable.html", teachers=teachers)
 
         ### Edit teacher row(teacher) ###
         elif (listValue == "ED_"):
@@ -828,7 +865,7 @@ def admin_teachersTable():
             return render_template("admin_teachersTableEdit.html", teacher=teacher)
         # return the adminUser.html with all the teachers tables
         teachers = Teacher.query.all()
-        return render_template("admin_teachersTable.html",teachers=teachers)
+        return render_template("admin_teachersTable.html", teachers=teachers)
 
 
 ### goes together with top function /admin_teachersTable
@@ -849,11 +886,16 @@ def admin_teachersTableEdit():
             teacher.email = request.form["email"]
             teacher.confirmationCode = request.form["ConfCode"]
             teacher.school = request.form["school"]
-            flash("The following has changed: {} = {} , {} = {} , {} = {} .".format(teacher.email,request.form["email"],teacher.school,request.form["school"],teacher.confirmationCode,request.form["ConfCode"]))
+            flash(
+                "The following has changed: {} = {} , {} = {} , {} = {} .".format(teacher.email, request.form["email"],
+                                                                                  teacher.school,
+                                                                                  request.form["school"],
+                                                                                  teacher.confirmationCode,
+                                                                                  request.form["ConfCode"]))
 
         db.session.commit()
         teachers = Teacher.query.all()
-        return render_template("admin_teachersTable.html",teachers=teachers)
+        return render_template("admin_teachersTable.html", teachers=teachers)
 
 
 ### /admin_specialFunctions (POST GET -> templateRendered)
@@ -918,7 +960,9 @@ def admin_editDelegate():
         delegate = Delegate.query.get(idx)
 
         if password == "Jpgc231099.":
-            flash("The following has changed: {} = {} , {} = {} , {} = {} , {} = {} .".format(delegate.assignment.committee.name, com, delegate.assignment.country, con, delegate.name, name, delegate.teacher.school, school))
+            flash("The following has changed: {} = {} , {} = {} , {} = {} , {} = {} .".format(
+                delegate.assignment.committee.name, com, delegate.assignment.country, con, delegate.name, name,
+                delegate.teacher.school, school))
             delegate.assignment.committee.name = com
             delegate.assignment.country = con
             delegate.name = name
@@ -956,7 +1000,8 @@ def admin_delegatesTables():
                 schoolName = db.session.query(Teacher).filter(Teacher.id == teacherSchoolID).first().school
                 flash("Searching for delegate with school {}".format(schoolName))
             elif teacherSchoolID != "None" and delegateName.strip() != "":
-                delegates = db.session.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID, Delegate.name.contains(delegateName))
+                delegates = db.session.query(Delegate).join(Teacher).filter(Teacher.id == teacherSchoolID,
+                                                                            Delegate.name.contains(delegateName))
                 schoolName = db.session.query(Teacher).filter(Teacher.id == teacherSchoolID).first().school
                 flash("Searching for delegate with name {} in school {}".format(delegateName, schoolName))
             else:
@@ -1015,7 +1060,11 @@ def admin_editCommittee():
         if request.form.get("advanced"):
             committee.advanced = "Yes"
         else:
-            flash("The following has changed: {} = {} , {} = {} , {} = {} , {} = {} .".format(committee.name, name, committee.typeOfCom, typeOfCom, committee.room, room, committee.advanced, "No"))
+            flash("The following has changed: {} = {} , {} = {} , {} = {} , {} = {} .".format(committee.name, name,
+                                                                                              committee.typeOfCom,
+                                                                                              typeOfCom, committee.room,
+                                                                                              room, committee.advanced,
+                                                                                              "No"))
             committee.advanced = "No"
 
         committee.name = name
@@ -1032,7 +1081,6 @@ def admin_takeMeToCommittee():
         idx = request.form["editCommittee"]
         committee = Committee.query.get(int(idx))
         return render_template("admin_editCommittee.html", committee=committee)
-
 
 
 ### /admin_manualRegister (POST GET -> templateRendered)
@@ -1054,23 +1102,28 @@ def admin_manualRegister():
             teacherID = session["addingTeacherId"]
             committeeID = int(request.form["committee"])
             session["manualCommitteeID"] = committeeID
-            assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committeeID, Assignment.delegate == None).all()
-            return render_template("admin_manualRegister.html", second=True, assignments=assignments, teacher=Teacher.query.get(teacherID), committee=assignments[0].committee)
+            assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committeeID,
+                                                                              Assignment.delegate == None).all()
+            return render_template("admin_manualRegister.html", second=True, assignments=assignments,
+                                   teacher=Teacher.query.get(teacherID), committee=assignments[0].committee)
 
         if value == "assign":
             teacherID = session["addingTeacherId"]
             comID = int(session["manualCommitteeID"])
             committee = Committee.query.get(comID)
-            countryID= int(request.form.get("country"))
+            countryID = int(request.form.get("country"))
             teacher = Teacher.query.get(teacherID)
             if teacher.canAddDelegate():
                 assignment = Assignment.query.get(countryID)
                 delegate = Delegate("", assignment.id, teacher.id, "")
-                flash("You have assigned {} {} {} to {} .".format(committee.name, committee.typeOfCom, assignment.country, teacher.name))
+                flash(
+                    "You have assigned {} {} {} to {} .".format(committee.name, committee.typeOfCom, assignment.country,
+                                                                teacher.name))
                 db.session.add(delegate)
                 db.session.commit()
             else:
-                flash("Unable to assign, teacher has no spots remaining, unasing another delegate or change Special Code")
+                flash(
+                    "Unable to assign, teacher has no spots remaining, unasing another delegate or change Special Code")
                 return redirect(url_for("admin_manualRegister"))
 
             return modHelpers.returnAdminPage("", None)
@@ -1083,7 +1136,6 @@ def admin_manualRegister():
 def admin_stats():
     ### GET
     if request.method == "GET" and session["adminIn"] == True:
-
         ### Assignments available ###
         # regular assignemnts
         hsenA = modHelpers.stillAvailable(TypeOfCom.HSEN.value, Important.NO.value, Advanced.NO.value)
@@ -1125,7 +1177,7 @@ def admin_stats():
         hsspiT = modHelpers.maxAssignInGen(TypeOfCom.HSSP.value, Important.YES.value, Advanced.NO.value)
         msspiT = modHelpers.maxAssignInGen(TypeOfCom.MSSP.value, Important.YES.value, Advanced.NO.value)
 
-        #advanced assignemnts
+        # advanced assignemnts
         msenaT = modHelpers.maxAssignInGen(TypeOfCom.MSEN.value, Important.NO.value, Advanced.YES.value)
         hsenaT = modHelpers.maxAssignInGen(TypeOfCom.HSEN.value, Important.NO.value, Advanced.YES.value)
         msspaT = modHelpers.maxAssignInGen(TypeOfCom.MSSP.value, Important.NO.value, Advanced.YES.value)
@@ -1142,12 +1194,15 @@ def admin_stats():
         committees = Committee.query.all()
 
         # return the template with data
-        return render_template("admin_stats.html", hsenA=hsenA,hsspA=hsspA,msenA=msenA,msspA=msspA,hsenT=hsenT,
-        hsspT=hsspT,msspT=msspT,msenT=msenT,totalT=totalT, totalA=totalA, mseniA=mseniA, hseniA=hseniA, mseniT=mseniT,
-        hseniT=hseniT, msspiA=msspiA, hsspiA=hsspiA, msspiT=msspiT, hsspiT=hsspiT, committees=committees,
-        hsenaA=hsenaA,hsspaA=hsspaA,msenaA=msenaA,msspaA=msspaA,hsenaT=hsenaT,
-        hsspaT=hsspaT,msspaT=msspaT,msenaT=msenaT, msenaiA=msenaiA, hsenaiA=hsenaiA, msenaiT=msenaiT,
-        hsenaiT=hsenaiT, msspaiA=msspaiA, hsspaiA=hsspaiA, msspaiT=msspaiT, hsspaiT=hsspaiT)
+        return render_template("admin_stats.html", hsenA=hsenA, hsspA=hsspA, msenA=msenA, msspA=msspA, hsenT=hsenT,
+                               hsspT=hsspT, msspT=msspT, msenT=msenT, totalT=totalT, totalA=totalA, mseniA=mseniA,
+                               hseniA=hseniA, mseniT=mseniT,
+                               hseniT=hseniT, msspiA=msspiA, hsspiA=hsspiA, msspiT=msspiT, hsspiT=hsspiT,
+                               committees=committees,
+                               hsenaA=hsenaA, hsspaA=hsspaA, msenaA=msenaA, msspaA=msspaA, hsenaT=hsenaT,
+                               hsspaT=hsspaT, msspaT=msspaT, msenaT=msenaT, msenaiA=msenaiA, hsenaiA=hsenaiA,
+                               msenaiT=msenaiT,
+                               hsenaiT=hsenaiT, msspaiA=msspaiA, hsspaiA=hsspaiA, msspaiT=msspaiT, hsspaiT=hsspaiT)
 
 
 ### /admin_printCommittee (POST GET -> templateRendered)
@@ -1165,7 +1220,8 @@ def admin_printCommittee():
     elif request.method == "POST" and session["adminIn"] == True:
         comName = request.form.get("committeeDropDown")
         committee = Committee.query.filter(Committee.name == comName).first()
-        return render_template("admin_printCommittee.html", first=False, second=True, committee=committee, assignments=committee.assignments)
+        return render_template("admin_printCommittee.html", first=False, second=True, committee=committee,
+                               assignments=committee.assignments)
 
 
 ## /admin_changeRooms (POST -> templateRendered)
@@ -1185,7 +1241,6 @@ def admin_changeRooms():
         return render_template("admin_changeRooms.html", committees=committees)
 
 
-
 ###############################################################################################################################################################
 ###############################################################################################################################################################
 #####################################################    ERROR HANDLERS      ##################################################################################
@@ -1197,20 +1252,24 @@ def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template("_errorPage.html", number="404"), 404
 
+
 @app.errorhandler(405)
 def error405(e):
     # note that we set the 404 status explicitly
     return render_template("_errorPage.html", number="405"), 405
+
 
 @app.errorhandler(403)
 def error403(e):
     # note that we set the 404 status explicitly
     return render_template("_errorPage.html", number="403"), 403
 
+
 @app.errorhandler(500)
 def error500(e):
     # note that we set the 404 status explicitly
     return render_template("_errorPage.html", number="500"), 500
+
 
 @app.errorhandler(502)
 def error502(e):
@@ -1218,8 +1277,7 @@ def error502(e):
     return render_template("_errorPage.html", number="502"), 502
 
 
-
 if __name__ == "__main__":
-	app.run()
-	debug=True
-    # Made by JP Garcia
+    app.run()
+    debug = True
+# Made by JP Garcia

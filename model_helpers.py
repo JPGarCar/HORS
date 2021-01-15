@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for, session, flash, send_file
 from flask_sqlalchemy import SQLAlchemy
-from application import db
+from app import db
 from models import Teacher, Committee, Assignment, Delegate
 import helpers
 from typeOfCommittee import TypeOfCom
@@ -27,7 +27,6 @@ def randomCountry(number, typeOfCom, important, teacher, advanced):
         # number of countries as specified in generalList
         maxNumInDBNow = stillAvailable(typeOfCom, important, advanced)
         # assigns a random number to "codeID", -1 because list starts at 0
-        print(maxNumInDBNow)
         if maxNumInDBNow == 1:
             codeID = 0;
         else:
@@ -155,7 +154,7 @@ def renderNewTeacherPage(teacher, numRem):
     HSSAIAvailable = stillAvailable(TypeOfCom.HSSP.value, Important.YES.value, Advanced.YES.value)
 
     # grade 6 assignments
-    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.YES.value)
+    G6HSAvailable = stillAvailable(TypeOfCom.G6EN.value, Important.NO.value, Advanced.NO.value)
 
     availability = {"MSEA" : MSEAvailable, "HSEA" : HSEAvailable, "MSSA" : MSSAvailable, "HSSA" : HSSAvailable,
                         "MSEIA" : MSEIAvailable, "HSEIA" : HSEIAvailable, "MSSIA" : MSSIAvailable, "HSSIA" : HSSIAvailable,
