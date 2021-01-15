@@ -336,8 +336,8 @@ def user_newTeacherPage():
             # will filter the list for any None values
             error_list = list(filter(None, error_list))
             if len(error_list) > 0:
+                flash("Some assignments have been added but we have some issues:")
                 for error in range(0, len(error_list)):
-                    flash("All the assignments have been added to your account except for:")
                     flash(error_list[error])
                 num_rem = target - teacher.getNumOfStudents()
                 return modHelpers.renderNewTeacherPage(session["currentTeacher"], num_rem)
