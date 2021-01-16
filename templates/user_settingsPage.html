@@ -1,0 +1,48 @@
+{% extends "layoutT.html" %}
+
+{% block titlebodyextra %}
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col col-8">
+            <form action="/logOut" method="POST" style="display: inline;">
+                <button class="btn btn-default" type="submit"> Log Out </button>
+            </form>
+
+            <form action ="/user_oldTeacherPage" method="GET" style="display: inline;">
+                <button class="btn btn-default" type="submit"> Back to Console </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h3> Feel free to change any of the information below. </h3> <br>
+
+    <form action="/userSettingsPage" method = "post">
+        <fieldset>
+            <div class="form-group">
+                <h3> Full Name: </h3>
+                <input type="text" autofocus class="form-control" name="name" id="Name" value="{{teacher.name}}" required >
+            </div>
+            <div class="form-group">
+                <h3> School: </h3>
+                <input type="text" class="form-control" name="school" id="School" value="{{teacher.school}}" required >
+            </div>
+            <div class="form-group">
+                <h3> Email Address: </h3>
+                <input type = "email" class="form-control" name="email" id="Email" value="{{teacher.email}}" required >
+            </div>
+            <div class="form-group">
+                <h3> Password: </h3>
+                <input type = "password" class="form-control" name = "password" >
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" type = "submit" value={{teacher.id}} name="submit"> Submit </button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+{% endblock %}

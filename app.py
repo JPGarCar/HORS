@@ -367,19 +367,19 @@ def goTo():
 ### page where teachers can edit their info
 @app.route("/userSettingsPage", methods=["POST", "GET"])
 def userSettingsPage():
-    ### POST
-    if request.method == "POST" and not session["currentTeacher"] == None:
-        teacherID = request.form["Button"]
-        teacher = Teacher.query.get(teacherID)
-        teacher.changePassword(request.form["password"])
+    if request.method == "POST" and not session["currentTeacher"] is None:
+        teacher_id = request.form["submit"]
+        teacher = Teacher.query.get(teacher_id)
+        if request.form["password"] != "":
+            teacher.changePassword(request.form["password"])
         teacher.email = request.form["email"]
+        teacher.name = request.form["name"]
         teacher.school = request.form["school"]
-        flash("Changes have been made succesfully!")
+        flash("Changes have been made successfully!")
         db.session.commit()
         return render_template("user_settingsPage.html", teacher=teacher)
 
-    ### GET
-    elif request.method == "GET" and not session["currentTeacher"] == None:
+    elif request.method == "GET" and not session["currentTeacher"] is None:
         teacher = Teacher.query.get(session["currentUserId"])
         return render_template("user_settingsPage.html", teacher=teacher)
 
@@ -392,7 +392,7 @@ def userSettingsPage():
 # @login_required
 def user_oldTeacherPage():
     ### POST
-    if request.method == "POST" and not session["currentTeacher"] == None:
+    if request.method == "POST" and not session["currentTeacher"] is None:
         # grab teacher that is logged in
         teacher = Teacher.query.get(session["currentUserId"])
 
@@ -422,7 +422,7 @@ def user_oldTeacherPage():
         return teacher.returnUserPageOld()
 
     ### GET
-    elif request.method == "GET" and not session["currentTeacher"] == None:
+    elif request.method == "GET" and not session["currentTeacher"] is None:
         teacher = Teacher.query.get(session["currentUserId"])
         return teacher.returnUserPageOld()
 
@@ -434,7 +434,7 @@ def user_oldTeacherPage():
 # @login_required
 def userDownload():
     ### POST
-    if request.method == "POST" and not session["currentTeacher"] == None:
+    if request.method == "POST" and not session["currentTeacher"] is None:
         # grab teacher logged in
         teacher = Teacher.query.get(session["currentUserId"])
         # grabs the school name of teacher
