@@ -1006,7 +1006,7 @@ def admin_delegatesTables():
                 flash("Searching for delegate with name {} in school {}".format(delegateName, schoolName))
             else:
                 delegates = Delegate.query.all()
-            teachers = Teacher.query.all()
+            teachers = Teacher.query.order_by(Teacher.name.asc()).all()
             return render_template("admin_delegatesTable.html", delegates=delegates, teachers=teachers)
 
         listValue = value[0:3]
@@ -1019,8 +1019,8 @@ def admin_delegatesTables():
             db.session.delete(Delegate.query.get(delete))
             db.session.commit()
         delegates = Delegate.query.all()
-        teachers = Teacher.query.all()
-        return render_template("admin_delegatesTable.html", delegates=delegates, taechers=teachers)
+        teachers = Teacher.query.order_by(Teacher.name.asc()).all()
+        return render_template("admin_delegatesTable.html", delegates=delegates, teachers=teachers)
 
 
 ### /admin_committeeTable (POST -> templateRendered)
