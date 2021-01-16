@@ -23,8 +23,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>School</th>
-            <th style="width: 150px;">Password</th>
-            <th>Confirmation Code</th>
+            <th># of students</th>
             <th>Delete</th>
             <th>Edit</th>
           </thead>
@@ -56,8 +55,7 @@
                         <td>{{teacher.name}}</td>
                         <td>{{teacher.email}}</td>
                         <td>{{teacher.school}}</td>
-                        <td style="max-width: 150px; word-wrap: break-word">{{teacher.password}}</td>
-                        <td>{{teacher.confirmationCode}}</td>
+                        <td>{{teacher.getNumOfMaxStudents()}}</td>
                         <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{teacher.id}}">Delete</button></td>
                         <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{teacher.id}}">Edit</button></td>
                     </tr>
