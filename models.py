@@ -6,7 +6,7 @@ from typeOfCommittee import TypeOfCom
 from Important import Important
 from advanced import Advanced
 from grades import Grades
-from app import db
+from application import db
 from passlib.apps import custom_app_context as pwd_context
 
 

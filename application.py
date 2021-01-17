@@ -44,7 +44,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 
 # defines variable 'app' to the flask
-app = Flask(__name__)
+application = app = Flask(__name__)
 app.secret_key = "b/xc7&xc9qx00f#xc2!xc3?xd1¡xb1U¿xbeo{xb0]xc6*xc2"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
