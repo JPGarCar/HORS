@@ -58,7 +58,7 @@ passlib==1.7.4
 pdfrw==0.4
 pew==1.2.0
 pexpect==4.8.0
-pillow==8.1.0
+pillow==8.1.1
 pip-upgrader==1.4.15
 pipenv==2020.11.15
 plotly==4.14.3
