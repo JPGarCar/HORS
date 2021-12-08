@@ -4,13 +4,15 @@ from random import choice
 from string import ascii_uppercase
 
 from flask import Flask, redirect, render_template, request, url_for, session, flash
+from flask_bootstrap import Bootstrap
 from math import ceil
 from passlib.apps import custom_app_context as pwd_context
 from sqlalchemy import or_
+
+from forms import TypeOfCommitteeForm
 from models import Teacher, Committee, Assignment, Delegate, TypeOfCommittee, db
 from typeOfCommittee import TypeOfCommitteeList
 import helpers
-
 
 # defines variable 'app' to the flask
 application = Flask(__name__)
@@ -19,8 +21,9 @@ application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
 application.config["SQLALCHEMY_ECHO"] = False
 
-db.init_app(application)
+bootstrap = Bootstrap(application)
 
+db.init_app(application)
 
 # if there is any session data on the users computer then clear it
 if session:
@@ -171,7 +174,8 @@ def assign_helper(looking_for: int, type_of_committee: TypeOfCommittee,
         )
 
         if number_of_assigned_assignments != looking_for:
-            return "We were only able to assign " + str(number_of_assigned_assignments) + " " + type_of_committee.__str__() + \
+            return "We were only able to assign " + str(
+                number_of_assigned_assignments) + " " + type_of_committee.__str__() + \
                    (' Important' if is_important == 'Yes' else '') + " assignments. The remaining " + \
                    str(looking_for - number_of_assigned_assignments) + " assignments are still at your disposal."
 
@@ -187,7 +191,8 @@ def user_newTeacherPage():
         teacher = Teacher.query.get(session["currentUserId"])
 
         class CommitteeTypeResponse:
-            def __init__(self, type_of_committee: TypeOfCommittee, regular_assignment_amount: int = 0, important_assignment_amount: int = 0):
+            def __init__(self, type_of_committee: TypeOfCommittee, regular_assignment_amount: int = 0,
+                         important_assignment_amount: int = 0):
                 self.type_of_committee = type_of_committee
                 self.regular_assignment_amount = regular_assignment_amount
                 self.important_assignment_amount = important_assignment_amount
@@ -200,14 +205,16 @@ def user_newTeacherPage():
 
         for committee_type in all_committee_types:
             regular_assignments = request.form.get(str(committee_type.id), type=int, default=0)
-            important_assignments = request.form.get('{}_important'.format(str(committee_type.id)), type=int, default=0) if \
+            important_assignments = request.form.get('{}_important'.format(str(committee_type.id)), type=int,
+                                                     default=0) if \
                 committee_type.has_important_assignments else 0
 
             committee_type_responses.append(CommitteeTypeResponse(type_of_committee=committee_type,
                                                                   regular_assignment_amount=regular_assignments,
                                                                   important_assignment_amount=important_assignments))
 
-        total_assignment_amount = sum([response.get_total_count() for response in committee_type_responses]) + teacher.number_of_students()
+        total_assignment_amount = sum(
+            [response.get_total_count() for response in committee_type_responses]) + teacher.number_of_students()
 
         # grabs the teacher's number of students
         target = teacher.max_number_of_students_possible()
@@ -479,7 +486,7 @@ def adminOne():
 
         # Add New Committee #
         elif value == "AddNewCom":
-            return render_template("admin_addNewCommittee.html", second=False, typeOfCom=TypeOfCommittee.query.all())
+            return redirect(url_for('admin_create_committee'))
 
         # Add new Country to committee #
         elif value == "AddNewCon":
@@ -489,6 +496,9 @@ def adminOne():
             assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committee_id)
             return render_template("admin_addNewCountry.html", committee=committee, second=False,
                                    assignments=assignments)
+
+        elif value == "AddNewComType":
+            return redirect(url_for('admin_create_type_of_committee'))
 
         # Delete info of all selected rows(assignments) #
         elif value == "DeleteBulkInfo":
@@ -539,9 +549,11 @@ def adminOne():
                 assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committee_id,
                                                                                   Assignment.country == country_name,
                                                                                   Assignment.delegate is None, ).all()
-                message = "Committee : {} , Country : {} , Not Taken".format(assignments[0].committee.name, country_name)
+                message = "Committee : {} , Country : {} , Not Taken".format(assignments[0].committee.name,
+                                                                             country_name)
             elif not is_committee_selected and is_country_selected and is_not_taken:
-                assignments = Assignment.query.filter(Assignment.country == country_name, Assignment.delegate is None).all()
+                assignments = Assignment.query.filter(Assignment.country == country_name,
+                                                      Assignment.delegate is None).all()
                 message = "Country : {} , Not Taken".format(country_name)
             elif is_committee_selected and not is_country_selected and is_not_taken:
                 assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committee_id,
@@ -650,10 +662,10 @@ def admin_generateCode():
 
 
 # /admin_addNewCommittee (POST -> templateRendered) !!! might need to add options for room, GET SHOULD USE ENUM stuff
-# add new committee, path to admin_addNewCommittee
+# add new committee, path to admin_create_committee
 # POST: two parts, first is committee creation, second is assignment creations
-@application.route("/admin_addNewCommittee", methods=["POST"])
-def admin_addNewCommittee():
+@application.route("/admin_addNewCommittee", methods=["POST", "GET"])
+def admin_create_committee():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
         value = request.form["Button"]
@@ -697,7 +709,13 @@ def admin_addNewCommittee():
                 db.session.add(Assignment(committee.id, country, committee_amount + num + 1, important))
             db.session.commit()
             return return_admin_page(None, None)
-    return return_admin_page(None, None)
+    if request.method == 'GET' and session["adminIn"] is True:
+        type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
+        type_of_committees.sort(key=lambda x: x.__str__())
+
+        return render_template("admin_addNewCommittee.html",
+                               second=False,
+                               typeOfCom=type_of_committees)
 
 
 # /admin_addNewCountry (POST -> templateRendered)
@@ -943,7 +961,8 @@ def admin_committeeTable():
         if (listValue == "ED_"):
             edit = value[3:]
             committee = Committee.query.filter(Committee.id == int(edit)).first()
-            return render_template("admin_editCommittee.html", committee=committee, types_of_committees=TypeOfCommittee.query.all())
+            return render_template("admin_editCommittee.html", committee=committee,
+                                   types_of_committees=TypeOfCommittee.query.all())
         elif listValue == "DE_":
             delete = int(value[3:])
             committee = Committee.query.get(delete)
@@ -977,7 +996,8 @@ def admin_editCommittee():
         db_session.commit()
 
         flash("Committee changed successfully!")
-        return render_template("admin_editCommittee.html", committee=committee, types_of_committees=TypeOfCommittee.query.all())
+        return render_template("admin_editCommittee.html", committee=committee,
+                               types_of_committees=TypeOfCommittee.query.all())
 
 
 @application.route("/admin_takeMeToCommittee", methods=["POST"])
@@ -985,7 +1005,8 @@ def admin_takeMeToCommittee():
     if request.method == "POST" and session["adminIn"] is True:
         idx = request.form["editCommittee"]
         committee = Committee.query.get(int(idx))
-        return render_template("admin_editCommittee.html", committee=committee, types_of_committees=TypeOfCommittee.query.all())
+        return render_template("admin_editCommittee.html", committee=committee,
+                               types_of_committees=TypeOfCommittee.query.all())
 
 
 # /admin_manualRegister (POST GET -> templateRendered)
@@ -1022,7 +1043,8 @@ def admin_manualRegister():
                 assignment = Assignment.query.get(countryID)
                 delegate = Delegate("", assignment.id, teacher.id, "")
                 flash(
-                    "You have assigned {} {} {} to {} .".format(committee.name, committee.type_of_committee, assignment.country,
+                    "You have assigned {} {} {} to {} .".format(committee.name, committee.type_of_committee,
+                                                                assignment.country,
                                                                 teacher.name))
                 db.session.add(delegate)
                 db.session.commit()
@@ -1041,7 +1063,6 @@ def admin_manualRegister():
 def admin_stats():
     # GET
     if request.method == "GET" and session["adminIn"] is True:
-
         committees: list[Committee] = Committee.query.all()
         type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
 
@@ -1082,6 +1103,25 @@ def admin_changeRooms():
         db.session.commit()
         flash("Rooms have been successfully changed.")
         return render_template("admin_changeRooms.html", committees=committees)
+
+
+@application.route("/admin_create_type_of_committee", methods=['POST', 'GET'])
+def admin_create_type_of_committee():
+    form = TypeOfCommitteeForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        type_of_committee = TypeOfCommittee(
+            level=form.level.data, language=form.language.data,
+            is_remote=form.is_remote.data, is_advanced=form.is_advanced.data,
+            has_important_assignments=form.has_important_assignments.data
+        )
+
+        db.session.add(type_of_committee)
+        db.session.commit()
+        flash('Type of committee {} added successfully!'.format(type_of_committee.__str__()))
+        return redirect(url_for('adminOne'))
+
+    return render_template('admin_add_new_type_of_committee.html', form=form)
 
 
 ###########################

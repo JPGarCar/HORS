@@ -1,0 +1,23 @@
+{% extends "layoutA.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block title_button_flex %}
+    <form action="/adminOne" method="GET">
+        <button class="btn btn-default" type="submit"> Admin Page</button>
+    </form>
+    <form action="/" method="GET">
+        <button class="btn btn-default" type="submit"> Login Page</button>
+    </form>
+{% endblock %}
+
+{% block body %}
+<div class="container my-3">
+    <div class="my-3">
+        <h3>Create a new committee type:</h3>
+    </div>
+
+    <form action="/admin_create_type_of_committee" method="POST">
+        {{ render_form(form) }}
+    </form>
+</div>
+{% endblock %}

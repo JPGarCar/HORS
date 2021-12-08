@@ -38,9 +38,21 @@ class TypeOfCommittee(db.Model):
         MIDDLESCHOOL = 'Middle School'
         GRADESIX = 'Grade Six'
 
+        def __str__(self):
+            return self.name
+
+        def __html__(self):
+            return self.value
+
     class Language(enum.Enum):
         ENGLISH = 'English'
         SPANISH = 'Spanish'
+
+        def __str__(self):
+            return self.name
+
+        def __html__(self):
+            return self.value
 
     id = db.Column(db.Integer, primary_key=True)
     level = db.Column(Enum(Level))
