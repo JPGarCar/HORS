@@ -46,8 +46,8 @@
                     <h4> Other functions: </h4>
                     <button class="btn btn-default" name="Button" type="submit" value="GenerateCode">Generate Code</button>
                     <button class="btn btn-default" name="Button" type="submit" value="changeRooms">Change Rooms</button>
-                    <button class="btn btn-default" name="Button" type="submit" value="AddNewCom">Add New Committee</button>
-                    <button class="btn btn-default" name="Button" type="submit" value="AddNewComType">Add New Committee Type</button>
+                    <a class="btn btn-default" href="{{ url_for('admin_create_committee') }}">Add New Committee</a>
+                    <a class="btn btn-default" href="{{ url_for('admin_create_type_of_committee') }}">Add New Committee Type</a>
                 </div>
                 <div class="col-4 px-2">
                     <label for="toCommitteeDropDown"> To committee: </label>

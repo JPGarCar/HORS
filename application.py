@@ -484,10 +484,6 @@ def adminOne():
             committees = Committee.query.order_by(Committee.name.asc()).all()
             return render_template("admin_changeRooms.html", committees=committees)
 
-        # Add New Committee #
-        elif value == "AddNewCom":
-            return redirect(url_for('admin_create_committee'))
-
         # Add new Country to committee #
         elif value == "AddNewCon":
             committee_id = int(request.form.get("toCommitteeDropDown"))
@@ -496,9 +492,6 @@ def adminOne():
             assignments = db.session.query(Assignment).join(Committee).filter(Committee.id == committee_id)
             return render_template("admin_addNewCountry.html", committee=committee, second=False,
                                    assignments=assignments)
-
-        elif value == "AddNewComType":
-            return redirect(url_for('admin_create_type_of_committee'))
 
         # Delete info of all selected rows(assignments) #
         elif value == "DeleteBulkInfo":
