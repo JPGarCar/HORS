@@ -90,7 +90,7 @@
                             <br>
 
                             <label>Grade Level</label>
-                            <select name="G_{{delegate.id}}" class="form-control custom-select" id="G_{{delegate.id}}">
+                            <select name="G_{{delegate.id}}" class="form-select" id="G_{{delegate.id}}">
                                 <option value="{{delegate.grade}}">{{delegate.grade}}</option>
                                 {% for grade in grades %}
                                     <option value="{{grade}}">{{grade}}</option>

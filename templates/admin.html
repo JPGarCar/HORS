@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-4 px-2">
                     <label for="toCommitteeDropDown"> To committee: </label>
-                    <select name="toCommitteeDropDown" class="form-control custom-select" id="toCommitteeDropDown">
+                    <select name="toCommitteeDropDown" class="form-select" id="toCommitteeDropDown">
                         {% for committee in committees %}
                             <option value="{{committee.id}}">{{committee.name}}  {{committee.type_of_committee}}</option>
                         {% endfor %}
@@ -91,7 +91,7 @@
                 <h4 style="text-align:center;"> Search Parameters </h4>
                 <div class="col-md-4">
                     <label for="committeeDropDown">Committee: </label>
-                    <select name="committeeDropDown" class="form-control custom-select" id="committeeDropDown">
+                    <select name="committeeDropDown" class="form-select" id="committeeDropDown">
                         <option value="None"> None</option>
                     {% for committee in committees %}
                          <option value="{{committee.id}}">{{committee.name}}  {{committee.type_of_committee}}</option>
