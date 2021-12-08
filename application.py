@@ -82,18 +82,18 @@ def user_registration():
 
                     # if the teacher has same assignments as his code permits then go to teacher page old
                     if number_of_students == max_number_of_possible_students:
-                        return teacher.return_user_page_old()
+                        return redirect(url_for('user_oldTeacherPage'))
                     # else go get more delegates
                     else:
                         return redirect(url_for('user_newTeacherPage'))
             flash(
                 "You have entered an incorrect password, please try again. "
                 "If the problem persists, call your HOSPITALITY member for asistance.")
-            return render_template("user_registration.html")
+            return redirect(url_for('user_registration'))
         flash(
             "You have entered an incorrect email, please try again. "
             "If the problem persists, call your HOSPITALITY member for asistance.")
-        return render_template("user_registration.html")
+        return redirect(url_for('user_registration'))
 
 
 # /user_signUp (GET POST -> templateRendered)
@@ -110,26 +110,26 @@ def user_signUp():
     elif request.method == "POST":
         # Validate confirmation code #
         # checks confirmation code validity using getSpecial() if not vaild return same page with flash error
-        if helpers.getSpecial(request.form["confirmationCode"]) == None:
+        if helpers.getSpecial(request.form["confirmationCode"]) is None:
             flash("You have entered an incorrect confirmation code.")
             flash("Please enter a valid confirmation code, if the problem persists, contact your HOSPITALITY member.")
-            return render_template("user_signUp.html")
+            return redirect(url_for('user_signUp'))
 
         else:
-            # Check Email Availability #
             # checks if email is already in table
             email = Teacher.query.filter_by(email=request.form["email"]).first()
 
             # if email inputed is already in use return same page with flash error
             if email is not None:
                 flash(
-                    "The email you have entered is already in use. If you do not remember your password please contact your HOSPITALITY member.")
-                return render_template("user_signUp.html")
+                    "The email you have entered is already in use. If you do not remember your "
+                    "password please contact your HOSPITALITY member.")
+                return redirect(url_for('user_signUp'))
 
             # Check Passwords Match #
             if not request.form["password"] == request.form["password_second"]:
                 flash("The passwords that you have entered do not match, please try again.")
-                return render_template("user_signUp.html")
+                return redirect(url_for('user_signUp'))
 
             # Adding teacher #
             teacher = Teacher(request.form["personName"], request.form["email"],
@@ -138,22 +138,12 @@ def user_signUp():
             db.session.add(teacher)
             db.session.commit()
             # return template user_signUpSuccess
-            return render_template("user_signUpSuccess.html")
+            return redirect(url_for('user_signUpSuccess'))
 
 
-# /user_signUpSuccess (GET POST -> templateRendered)
-# user_signUpSuccess route, simple node
-# GET: returns the user_signUpSuccess template
-# POST: returnes the teacher to registration template
-@application.route("/user_signUpSuccess", methods=["POST", "GET"])
+@application.route("/user_signUpSuccess", methods=["GET"])
 def user_signUpSuccess():
-    # POST
-    if request.method == "POST":
-        return render_template("user_registration.html")
-
-    # GET
-    else:
-        return render_template("user_signUpSuccess.html")
+    return render_template("user_signUpSuccess.html")
 
 
 def assign_helper(looking_for: int, type_of_committee: TypeOfCommittee,
@@ -247,7 +237,7 @@ def user_newTeacherPage():
                     flash(error_list[error])
                 return redirect(url_for('user_newTeacherPage'))
             else:
-                return teacher.return_user_page_old()
+                return redirect(url_for('user_newTeacherPage'))
         else:
             # if incorrect number of assignments, return same page with number of assignments remaining
             num_rem = target - teacher.number_of_students()
@@ -269,14 +259,6 @@ def user_newTeacherPage():
     return render_template("user_registration.html")
 
 
-# /goTo (POST -> templateRendered)
-# goTo route, takes to the singUp template used after the teacher registers only has POST for button click
-@application.route("/goTo", methods=["POST"])
-def goTo():
-    # POST
-    return render_template("user_signUp.html")
-
-
 # /userSettingsPage (POST -> templateRendered)
 # page where teachers can edit their info
 @application.route("/userSettingsPage", methods=["POST", "GET"])
@@ -291,7 +273,7 @@ def userSettingsPage():
         teacher.school = request.form["school"]
         flash("Changes have been made successfully!")
         db.session.commit()
-        return render_template("user_settingsPage.html", teacher=teacher)
+        return redirect(url_for('userSettingsPage'))
 
     elif request.method == "GET" and not session["currentTeacher"] is None:
         teacher = Teacher.query.get(session["currentUserId"])
@@ -332,12 +314,14 @@ def user_oldTeacherPage():
 
         # return the user page old with returnUserPageOld()
         flash("Your responses have been saved. If you want a copy of the final list, please click Download Assignments.")
-        return teacher.return_user_page_old()
+        return redirect(url_for('user_oldTeacherPage'))
 
     # GET
-    elif request.method == "GET" and not session["currentTeacher"] is None:
+    elif request.method == "GET" and not session.get('currentTeacher') is None:
         teacher = Teacher.query.get(session["currentUserId"])
         return teacher.return_user_page_old()
+    else:
+        return redirect(url_for('user_registration'))
 
 
 # /userDownload (POST -> templateRendered)
@@ -359,7 +343,7 @@ def userDownload():
 
 
 # /logOut (POST -> templateRendred)
-# similiar to signOut but different unknown use
+# similar to signOut but different unknown use
 # POST: delete all session info and flashes, return user_registration.html
 @application.route("/logOut", methods=["POST"])
 # @login_required
@@ -367,13 +351,12 @@ def logOut():
     if session:
         session.clear()
         session.pop('_flashes', None)
-    # logout_user()
-    return render_template("user_registration.html")
+    return redirect(url_for('user_registration'))
 
 
 ###########################
 ###########################
-##########       Admin Pages     ###############
+#      Admin Pages     ####
 ###########################
 ###########################
 
@@ -381,7 +364,7 @@ def logOut():
 # /adminOne (POST GET -> templateRendered)
 # admin console route
 # POST: check the button status and act accordingly
-# GET: return retrunAdminPage() for all info
+# GET: return returnAdminPage() for all info
 @application.route("/adminOne", methods=["POST", "GET"])
 def adminOne():
     # GET

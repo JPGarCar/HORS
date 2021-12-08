@@ -3,8 +3,6 @@
 {% block body %}
 <div class="container my-3">
     <h4> Thank you for signing in, please log in by clicking the button below </h4>
-    <form action = "/user_signUpSuccess" method="POST" class="my-3">
-        <button class="btn btn-default" type="submit" > Log In </button>
-    </form>
+    <a class="btn btn-default" href="{{ url_for('user_registration') }}" > Log In </a>
 </div>
 {% endblock %}
