@@ -184,7 +184,6 @@ def assign_helper(looking_for: int, type_of_committee: TypeOfCommittee,
 # user_newTeacherPage route, for the new teachers that need to select the number of assignments
 # POST: let teachers select number of assignments limited to their code limit
 @application.route("/user_newTeacherPage", methods=["POST", "GET"])
-# @login_required
 def user_newTeacherPage():
     if request.method == "POST" and not session["currentUserId"] is None:
         # grab teacher that is signed in
@@ -259,6 +258,7 @@ def user_newTeacherPage():
 
     elif request.method == 'GET' and not session["currentUserId"] is None:
         type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
+        type_of_committees.sort(key=lambda x: x.__str__())
         teacher: Teacher = Teacher.query.get(int(session["currentUserId"]))
         num_remaining = teacher.max_number_of_students_possible() - teacher.number_of_students()
 
@@ -331,7 +331,7 @@ def user_oldTeacherPage():
         db_session.commit()
 
         # return the user page old with returnUserPageOld()
-        flash("The names have been changed as requested.")
+        flash("Your responses have been saved. If you want a copy of the final list, please click Download Assignments.")
         return teacher.return_user_page_old()
 
     # GET

@@ -6,8 +6,6 @@ table.comicGreen {
   font-family: "Times New Roman", Times, serif;
   border: 4px solid #CB2323;
   background-color: #EEEEEE;
-  width: 100%;
-  height: 200%;
   text-align: center;
   border-collapse: collapse;
 }
@@ -45,74 +43,70 @@ table.comicGreen thead th:first-child {
 </style>
 {% endblock %}
 
-{% block titlebodyextra %}
-
-{% endblock %}
-
-
 {% block body %}
-<div class="container my-4">
+<div class="my-4 mx-5">
     <form action="/user_newTeacherPage" method="post">
-    <h2> <strong>Welcome {{teacher.name}} </strong> to your page. It seems you have not assigned delegations to your students,
-    you have {{numRem}} students to assign, please choose your assignments below. </h2>
+        <h2> <strong>Welcome {{teacher.name}} </strong> to your page. It seems you have not assigned delegations to your students,
+        you have {{numRem}} students to assign, please choose your assignments below. </h2>
 
-    <h5> The number of assignments you can get is limited to the number of students you paid for. If you want more
-         assignments, please talk to your HOSPITALITY representative. </h5>
+        <h5> The number of assignments you can get is limited to the number of students you paid for. If you want more
+             assignments, please talk to your HOSPITALITY representative. </h5>
 
-    <div class="my-4">
-        <h3>Committee and Assignment Types:</h3>
-        <div class="mx-3 my-1">
-            <h5><strong>Important Assignments</strong> are important countries in the committee debate. Students that take an
-                important assignment are expected to participate
-                more often and make more valuable contribution that will have a meaningful impact on the debate and the
-                resolution process. Being an important assignment does not equate to a higher probability of winning an award.
-            </h5>
-            <h5><strong>Advanced Committees</strong> are committees characteristically designed to provide a uniquely
-                challenging experience for delegates with an existing background in debate.
-                For delegates that are new to IMMUNS and/or MUN,
-                the Secretariat recommends a more traditional committee in order to get the most out of our simulation.
-            </h5>
+        <div class="my-4">
+            <h3>Committee and Assignment Types:</h3>
+            <div class="mx-3 my-1">
+                <h5><strong>Important Assignments</strong> are important countries in the committee debate. Students that take an
+                    important assignment are expected to participate
+                    more often and make more valuable contribution that will have a meaningful impact on the debate and the
+                    resolution process. Being an important assignment does not equate to a higher probability of winning an award.
+                </h5>
+                <h5><strong>Advanced Committees</strong> are committees characteristically designed to provide a uniquely
+                    challenging experience for delegates with an existing background in debate.
+                    For delegates that are new to IMMUNS and/or MUN,
+                    the Secretariat recommends a more traditional committee in order to get the most out of our simulation.
+                </h5>
+            </div>
         </div>
-    </div>
 
-    <div class="container">
-        <table class="comicGreen">
-            <thead>
-                <tr>
-                    <th>Committee Type</th>
-                    <th>Available Spots</th>
-                    <th>Looking for</th>
-                    <th>Already Assigned to You</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for type_of_committee in type_of_committees %}
-                    {% set amount_of_assignments, amount_of_important_assignments = type_of_committee.get_amount_of_available_assignments() %}
+        <div>
+            <table class="comicGreen table">
+                <thead>
                     <tr>
-                        <td>{{ type_of_committee }}</td>
-                        <td>{{ amount_of_assignments }} Available</td>
-                        <td><input type="number" class="form-control" name="{{ type_of_committee.id }}" id="{{ type_of_committee.id }}" value="0" min="0" {% if amount_of_assignments ==0 %} disabled {% endif %} max="{{ amount_of_assignments }}" ></td>
-                        <td>{{ teacher.amount_of_students_for_committee_type(type_of_committee) }}</td>
+                        <th>Committee Type</th>
+                        <th>Regular Spots Available</th>
+                        <th>Looking For</th>
+                        <th>Already Assigned to You</th>
+                        <th>Important Assignment Spots Available</th>
+                        <th>Looking For</th>
+                        <th>Already Assigned to You</th>
                     </tr>
-
-                    {% if amount_of_important_assignments %}
+                </thead>
+                <tbody>
+                    {% for type_of_committee in type_of_committees %}
+                        {% set amount_of_assignments, amount_of_important_assignments = type_of_committee.get_amount_of_available_assignments() %}
                         <tr>
-                            <td>{{ type_of_committee }} - Important</td>
-                            <td>{{ amount_of_important_assignments }} Available</td>
-                            <td><input type="number" class="form-control" name="{{ type_of_committee.id }}_important" id="{{ type_of_committee.id }}_important" value="0" min="0" max="{{ amount_of_important_assignments }}" {% if amount_of_important_assignments ==0 %} disabled {% endif %} ></td>
-                            <td>{{ teacher.amount_of_students_for_committee_type(type_of_committee, True) }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                            <td>{{ type_of_committee }}</td>
+                            <td>{{ amount_of_assignments }} Available</td>
+                            <td><input type="number" class="form-control" name="{{ type_of_committee.id }}" id="{{ type_of_committee.id }}" value="0" min="0" {% if amount_of_assignments ==0 %} disabled {% endif %} max="{{ amount_of_assignments }}" ></td>
+                            <td>{{ teacher.amount_of_students_for_committee_type(type_of_committee) }}</td>
 
-    <div class="container my-3">
-        <div class="form-group">
-            <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
+                            <td>{{ amount_of_important_assignments }} Available</td>
+                            <td><input type="number" class="form-control" name="{{ type_of_committee.id }}_important" id="{{ type_of_committee.id }}_important" value="0" min="0" max="{{ amount_of_important_assignments }}" {% if amount_of_important_assignments == 0 or not amount_of_important_assignments %} disabled {% endif %} ></td>
+                            <td>{{ teacher.amount_of_students_for_committee_type(type_of_committee, True) }}</td>
+
+                        </tr>
+
+
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </div>
+
+        <div class="my-3">
+            <div class="form-group">
+                <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
+            </div>
+        </div>
     </form>
 </div>
 
