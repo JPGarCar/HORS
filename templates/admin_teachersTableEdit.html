@@ -1,22 +1,16 @@
 {% extends "layoutA.html" %}
 
-{% block titlebodyextra %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
-<div class="col-lg-4 col-lg-offset-5">
-    <form action="/adminOne" method="GET" style="display: inline;">
+{% block title_button_flex %}
+    <form action="/adminOne" method="GET">
         <button class="btn btn-default" type="submit"> Admin Page </button>
     </form>
-    <form action ="/" method="GET" style="display: inline;">
+    <form action ="/" method="GET">
         <button class="btn btn-default" type="submit"> Login Page </button>
     </form>
-</div>
 {% endblock %}
 
-{% block extratitlebody %}{% endblock %}
-
 {% block body %}
-<div class="container">
+<div class="container my-3">
     <form action="/admin_teachersTableEdit" method="POST">
         <!-- Modal -->
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -49,10 +43,10 @@
         <div class="form-group">
         <h3> New Password    (DO NOT CHANGE UNLESS YOU WANT TO CHANGE THE PASSWORD) </h3>
         <input type="text" class="form-control" name="password" value="{{teacher.password}}"/>
-        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter">Change Password</button>
+        <button class="btn btn-default" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Change Password</button>
         </div>
         <div class="form-group">
-        <h3>Confirmation Code</h3><input type="text" class="form-control" name="ConfCode" value="{{teacher.confirmationCode}}"/> <br>
+        <h3>Confirmation Code</h3><input type="text" class="form-control" name="ConfCode" value="{{teacher.confirmation_code}}"/> <br>
         </div>
         <div class="form-group">
         <button class="btn btn-default" name="Button" type="submit" value="{{teacher.id}}">Edit</button>

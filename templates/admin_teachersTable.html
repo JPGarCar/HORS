@@ -1,23 +1,19 @@
 {% extends "layoutA.html" %}
 
-{% block titlebodyextra %}
-<div class="col-lg-4 col-lg-offset-5">
-    <form action="/adminOne" method="GET" style="display: inline;">
+{% block title_button_flex %}
+    <form action="/adminOne" method="GET">
         <button class="btn btn-default" type="submit"> Admin Page </button>
     </form>
-    <form action ="/" method="GET" style="display: inline;">
+    <form action ="/" method="GET">
         <button class="btn btn-default" type="submit"> Login Page </button>
     </form>
-</div>
 {% endblock %}
-
-{% block extratitlebody %}{% endblock %}
 
 {% block body %}
 <form action="/admin_teachersTable" method="POST">
-    <div class="container">
+    <div class="container my-3">
         <h4> Admins be aware that removing a teacher from this table will cause the teacher's assignments to me removed from the system.</h4>
-        <table class="table table-hover table-striped" style="width:100%">
+        <table class="table table-hover table-striped my-3" style="width:100%">
           <thead>
             <th>ID</th>
             <th>Name</th>
@@ -29,15 +25,13 @@
           </thead>
           <tbody>
                 {% for teacher in teachers %}
-                  <!-- Modal -->
-                    <div class="modal fade" id="exampleModalCenter{{teacher.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter{{teacher.id}}" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
                             <h4>Are you sure you want to delete the teacher. Doing so would delete all the teacher's info, delegats and their assignments would be free.</h4>
@@ -55,8 +49,8 @@
                         <td>{{teacher.name}}</td>
                         <td>{{teacher.email}}</td>
                         <td>{{teacher.school}}</td>
-                        <td>{{teacher.getNumOfMaxStudents()}}</td>
-                        <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{teacher.id}}">Delete</button></td>
+                        <td>{{teacher.max_number_of_students_possible()}}</td>
+                        <td><button class="btn btn-default" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{teacher.id}}">Delete</button></td>
                         <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{teacher.id}}">Edit</button></td>
                     </tr>
                 {% endfor %}

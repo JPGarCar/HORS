@@ -3,10 +3,10 @@
 {% block titlebodyextra %}
 <div class="col-lg-4 col-lg-offset-5">
     <form action="/adminOne" method="GET" style="display: inline;">
-    <button class="btn btn-default" type="submit"> Admin Page </button>
+        <button class="btn btn-default" type="submit"> Admin Page</button>
     </form>
-    <form action ="/" method="GET" style="display: inline;">
-        <button class="btn btn-default" type="submit"> Login Page </button>
+    <form action="/" method="GET" style="display: inline;">
+        <button class="btn btn-default" type="submit"> Login Page</button>
     </form>
 </div>
 {% endblock %}
@@ -16,52 +16,50 @@
 {% block body %}
 <form action="/admin_addNewCommittee" method="POST">
     {% if second == False %}
-        <div class="container">
-                <div class="form-group">
-                    <H3>New Committee:</H3>
-                    <input type="text" class="form-control" name="committee" id="committee">
-                </div>
-                <div class="form-group">
-                    <H3>Number of Countries:</H3>
-                    <input type="text" class="form-control" name="number" id="number" value="0">
-                </div>
-                <div class="form-group">
-                    <p1>Type of Committee:</p1><select class="form-control" name="typeOfCom">
-                        {% for com in typeOfCom %}
-                          <option value="{{com.value}}">{{com.value}}</option>
-                          {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <td> <input type="checkbox" class="form-check-input" name="advanced"> Advanced </td>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <Button class="btn btn-default" type="submit" name="Button" value="create">Next</Button>
-                </div>
+    <div class="container">
+        <div class="form-group">
+            <H3>New Committee:</H3>
+            <input type="text" class="form-control" name="committee" id="committee">
         </div>
+        <div class="form-group">
+            <H3>Number of Countries:</H3>
+            <input type="text" class="form-control" name="number" id="number" value="0">
+        </div>
+        <div class="form-group">
+            <p1>Type of Committee:</p1>
+            <select class="form-control" name="typeOfCom">
+                {% for com in typeOfCom %}
+                <option value="{{com.id}}">{{com}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <Button class="btn btn-default" type="submit" name="Button" value="create">Next</Button>
+        </div>
+    </div>
     {% endif %}
     {% if second == True %}
-        <div class="container">
-            <h3> For the new committee {{committee}} type {{typeOfCom}} what will the countries be?</h3>
-        </div>
-        <div class="container">
-            <ol>
-                {% for num in range(numberOfAssignments) %}
-                    <div class="form-group">
-                        <li>
-                             <H5> Country: </H5>
-                             <input type="text" class="form-control" name="{{num}}">
-                         </li>
-                         <div class="custom-control custom-checkbox">
-                                <td> <input type="checkbox" class="form-check-input" name="I{{num}}"> Important </td>
-                         </div>
-                    </div>
-                {% endfor %}
-            </ol>
-            <Button class="btn btn-default" type="submit" name="Button" value="populate">Finish</Button>
-        </div>
+    <div class="container">
+        <h3> For the new committee {{committee}} type {{committee_type_name}} what will the countries be?</h3>
+    </div>
+    <div class="container">
+        <ol>
+            {% for num in range(numberOfAssignments) %}
+            <div class="form-group">
+                <li>
+                    <H5> Country: </H5>
+                    <input type="text" class="form-control" name="{{num}}">
+                </li>
+                {% if type_of_committee.has_important_assignments %}
+                <div class="custom-control custom-checkbox">
+                    <td><input type="checkbox" class="form-check-input" name="I{{num}}"> Important</td>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </ol>
+        <Button class="btn btn-default" type="submit" name="Button" value="populate">Finish</Button>
+    </div>
     {% endif %}
 </form>
 {% endblock %}

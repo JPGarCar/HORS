@@ -27,10 +27,12 @@
         <h4>This will delete all the assignments for the chosen committee</h4>
         <p1> To committee: </p1><select name="committeeDropDown">
             {% for committee in committees %}
-                <option value="{{committee.id}}">{{committee.name}}  {{committee.typeOfCom}}</option>
+                <option value="{{committee.id}}">{{committee.name}}  {{committee.type_of_committee}}</option>
             {% endfor %}
         </select> <br>
         <button class="btn btn-default" name="Button" type="submit" value="DeleteEntireCommittee">Delete Entire Committee</button>
+        <h4>This will add the common committee types to the database. Only run if they are not available!</h4>
+        <button class="btn btn-default" name="Button" type="submit" value="CreateCommitteeTypes">Create Committee Types</button>
     </form>
 </div>
 {% endblock %}

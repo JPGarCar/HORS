@@ -1,12 +1,10 @@
 {% extends "layoutT.html" %}
 
-{% block titlebodyextra %}{% endblock %}
-
 {% block body %}
-<div class="container">
-            <h4> Thankyou for signing in, please log in by clicking the button below </h4>
-            <form action = "/user_signUpSuccess" method="POST">
-                <button class="btn btn-default" type="submit" > Log In </button>
-            </form>
-        </div>
+<div class="container my-3">
+    <h4> Thank you for signing in, please log in by clicking the button below </h4>
+    <form action = "/user_signUpSuccess" method="POST" class="my-3">
+        <button class="btn btn-default" type="submit" > Log In </button>
+    </form>
+</div>
 {% endblock %}

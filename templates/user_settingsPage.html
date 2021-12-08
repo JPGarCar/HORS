@@ -1,25 +1,17 @@
 {% extends "layoutT.html" %}
 
-{% block titlebodyextra %}
-<div class="container">
-    <div class="row justify-content-md-center">
-        <div class="col col-8">
-            <form action="/logOut" method="POST" style="display: inline;">
-                <button class="btn btn-default" type="submit"> Log Out </button>
-            </form>
+{% block title_button_flex %}
+    <form action="/logOut" method="POST" >
+        <button class="btn btn-default" type="submit"> Log Out </button>
+    </form>
 
-            <form action ="/user_oldTeacherPage" method="GET" style="display: inline;">
-                <button class="btn btn-default" type="submit"> Back to Console </button>
-            </form>
-        </div>
-    </div>
-</div>
+    <form action ="/user_oldTeacherPage" method="GET" >
+        <button class="btn btn-default" type="submit"> Back to Console </button>
+    </form>
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <h3> Feel free to change any of the information below. </h3> <br>
-
+<div class="container my-3">
     <form action="/userSettingsPage" method = "post">
         <fieldset>
             <div class="form-group">
@@ -38,7 +30,7 @@
                 <h3> Password: </h3>
                 <input type = "password" class="form-control" name = "password" >
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <button class="btn btn-default" type = "submit" value={{teacher.id}} name="submit"> Submit </button>
             </div>
         </fieldset>

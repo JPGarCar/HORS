@@ -1,20 +1,16 @@
 {% extends "layoutA.html" %}
 
-{% block titlebodyextra %}
-<div class="col-lg-4 col-lg-offset-5">
-    <form action="/adminOne" method="GET" style="display: inline;">
+{% block title_button_flex %}
+    <form action="/adminOne" method="GET">
         <button class="btn btn-default" type="submit"> Admin Page </button>
     </form>
-    <form action ="/" method="GET" style="display: inline;">
+    <form action ="/" method="GET">
         <button class="btn btn-default" type="submit"> Login Page </button>
     </form>
-</div>
 {% endblock %}
 
-{% block extratitlebody %}{% endblock %}
-
 {% block body %}
-<div class="container">
+<div class="container my-3">
     <form action="/admin_editDelegate" method="POST">
         <!-- Modal -->
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -22,9 +18,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <h4>Are you sure of what you are doing? Some changes might affect more than what you think. Contact JP Garcia for password.</h4>
@@ -42,28 +36,30 @@
 
         <h4> Admin user be aware that changing the committee or country here WILL make a change
                 in the assignment and in the system, if you want to make a change to the assigment
-                you need to clear the assignment of this delegate and then manualy assign the assignemnt you
+                you need to clear the assignment of this delegate and then manually assign the assignment you
                 want to the delegate. CHANGING THE NAME WILL MAKE A CHANGE IN THE SYSTEM
         </h4>
-        <div class="form-group">
-            <h3>Name</h3>
-            <input type="text" class="form-control" name="delegateName" value="{{delegate.name}}"/>
+        <div class="my-3">
+            <div class="form-group">
+                <h3>Name</h3>
+                <input type="text" class="form-control" name="delegateName" value="{{delegate.name}}"/>
+            </div>
+            <div class="form-group">
+                <h3>School</h3>
+                <input type="text" class="form-control" name="delegateSchool" value="{{delegate.teacher.school}}"/>
+            </div>
+            <div class="form-group">
+                <h3>Committee</h3>
+                <input type="text" class="form-control" name="committee" value="{{delegate.assignment.committee.name}}"/>
+            </div>
+            <div class="form-group">
+                <h3>Country</h3>
+                <input type="text" class="form-control" name="country" value="{{delegate.assignment.country}}"/>
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+                Edit
+            </button>
         </div>
-        <div class="form-group">
-            <h3>School</h3>
-            <input type="text" class="form-control" name="delegateSchool" value="{{delegate.teacher.school}}"/>
-        </div>
-        <div class="form-group">
-            <h3>Committee</h3>
-            <input type="text" class="form-control" name="committee" value="{{delegate.assignment.committee.name}}"/>
-        </div>
-        <div class="form-group">
-            <h3>Country</h3>
-            <input type="text" class="form-control" name="country" value="{{delegate.assignment.country}}"/>
-        </div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-            Edit
-        </button>
     </form>
 </div>
 {% endblock %}

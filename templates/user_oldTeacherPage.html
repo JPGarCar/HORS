@@ -1,22 +1,11 @@
 {% extends "layoutT.html" %}
 
-{% block titlebodyextra %}
-<style>
-
-
-
-    /* ----------- My Form ----------- */
-    .myform{
-    margin:1%;
-    width: auto;
-    min-height: 300px;
-    padding:5%;
-    }
+{% block head_content %}
+    <style>
 
 /* ----------- stylized ----------- */
 
-        body{
-    font-family: 'Playfair Display', serif;
+    body{
     font-size:17px;
     }
 
@@ -38,16 +27,13 @@
     display:block;
     font-weight:bold;
     text-align:left;
-    width:140px;
     float:left;
     }
 
         #stylized input.text{
-    float:center;
     font-size:20px;
     padding:4px 2px;
     border:solid 1px #aacfe4;
-    width:200px;
     margin:2px 0 20px 10px;
     }
 
@@ -57,7 +43,7 @@
     margin-left:150px;
     width:125px;
     height:31px;
-    background:#660505 url(img/button.png) no-repeat;
+    background:#660505;
     text-align:center;
     line-height:31px;
     color:#FFFFFF;
@@ -66,74 +52,58 @@
     }
 
 </style>
-<div class="container">
-    <div class="row justify-content-md-center">
-        <div class="col col-8">
-            <form action="/logOut" method="POST" style="display: inline;">
-                <button class="btn btn-default" type="submit"> Log Out </button>
-            </form>
+{% endblock %}
 
-            <form action ="/userDownload" method="POST" style="display: inline;">
-                <button class="btn btn-default" type="submit"> Download Assignments </button>
-            </form>
+{% block title_button_flex %}
+    <form action="/logOut" method="POST">
+        <button class="btn btn-default" type="submit"> Log Out </button>
+    </form>
 
-            <form action ="/userSettingsPage" method="GET" style="display: inline;">
-                <button class="btn btn-default" type="submit"> Account Settings </button>
-            </form>
-        </div>
-    </div>
-</div>
+    <form action ="/userDownload" method="POST">
+        <button class="btn btn-default" type="submit"> Download Assignments </button>
+    </form>
 
-
+    <form action ="/userSettingsPage" method="GET">
+        <button class="btn btn-default" type="submit"> Account Settings </button>
+    </form>
 {% endblock %}
 
 {% block body %}
-<br>
-<div class="container">
+
+<div class="container my-3">
     <h4> These are your assigned delegations, please specify the name and grade of the student for each delegation.</h4>
 </div>
 
-<br><br>
-
-<div style="text-align:center">
+<div class="text-center">
     <form action="/user_oldTeacherPage" method="POST">
         <div class="container-fluid">
-            <div class="form-group">
-                <div class="row">
-                    <ol style=" list-style-type: none">
-                        {% for delegate in delegates %}
-                            <div class="col-6 col-md-4">
-                                <div id="stylized" class="myform">
-                                    <li>
-                                        <div>
-                                            <h1>{{delegate.assignment.committee.name}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == "Yes" %}  -  Important Country {% endif %}
-                                                {% if delegate.assignment.committee.advanced == "Yes" %}  -  Advanced Committee {% endif %}</h1>
-                                        </div>
-                                        <div>
-                                            <label>Student Full Name</label>
-                                            <input type="text" name="N_{{delegate.id}}" id="N_{{delegate.id}}"  class="form-control" value="{{delegate.name}}" />
+            <div class="d-flex flex-row flex-wrap justify-content-around">
+                {% for delegate in delegates %}
+                    <div id="stylized" class="myform col-12 col-md-5 col-lg-3 p-5 m-2">
+                        <div>
+                            <h1>{{delegate.assignment.committee.__str__()}}  -  {{delegate.assignment.country}} {% if delegate.assignment.important == True %}  -  Important Country {% endif %}</h1>
+                        </div>
+                        <div>
+                            <label>Student Full Name</label>
+                            <input type="text" name="N_{{delegate.id}}" id="N_{{delegate.id}}"  class="form-control" value="{{delegate.name}}" />
 
-                                            <br>
+                            <br>
 
-                                            <label>Grade Level</label>
-                                            <select name="G_{{delegate.id}}" class="form-control custom-select" id="G_{{delegate.id}}">
-                                                <option value="{{delegate.grade}}">{{delegate.grade}}</option>
-                                                {% for grade in grades %}
-                                                    <option value="{{grade}}">{{grade}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
+                            <label>Grade Level</label>
+                            <select name="G_{{delegate.id}}" class="form-control custom-select" id="G_{{delegate.id}}">
+                                <option value="{{delegate.grade}}">{{delegate.grade}}</option>
+                                {% for grade in grades %}
+                                    <option value="{{grade}}">{{grade}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-                                    </li>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </ol>
-                </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
-        <div class="container-fluid">
+        <div class="container-fluid mt-3">
             <div class="form-group">
         	    <div class="form-row">
         	        <button type="submit" class="btn btn-default" name="submit" id="submit"> Submit </button>

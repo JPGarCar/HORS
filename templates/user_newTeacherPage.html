@@ -1,9 +1,7 @@
 {% extends "layoutT.html" %}
 
-{% block titlebodyextra %}{% endblock %}
-
-{% block body %}
-<style>
+{% block head_content %}
+    <style>
 table.comicGreen {
   font-family: "Times New Roman", Times, serif;
   border: 4px solid #CB2323;
@@ -44,357 +42,78 @@ table.comicGreen thead th:first-child {
   border-left: none;
 }
 
-table.comicGreen tfoot td {
-  font-size: 21px;
-}
-table.comicGreen tfoot .links {
-  text-align: right;
-}
-table.comicGreen tfoot .links a{
-  display: inline-block;
-  background: #FFFFFF;
-  color: #D13D36;
-  padding: 2px 8px;
-  border-radius: 5px;
-}
 </style>
+{% endblock %}
 
-<div class="container">
+{% block titlebodyextra %}
+
+{% endblock %}
+
+
+{% block body %}
+<div class="container my-4">
     <form action="/user_newTeacherPage" method="post">
     <h2> <strong>Welcome {{teacher.name}} </strong> to your page. It seems you have not assigned delegations to your students,
     you have {{numRem}} students to assign, please choose your assignments below. </h2>
-    <br>
-    <h4> Please know, the number of students available is limited to the number of students you paid. If you want more
-         delegations, please talk to your HOSPITALITY representative. </h4>
-    <h3>Please select the number of delegates you want in a Normal Commitee.</h3>
+
+    <h5> The number of assignments you can get is limited to the number of students you paid for. If you want more
+         assignments, please talk to your HOSPITALITY representative. </h5>
+
+    <div class="my-4">
+        <h3>Committee and Assignment Types:</h3>
+        <div class="mx-3 my-1">
+            <h5><strong>Important Assignments</strong> are important countries in the committee debate. Students that take an
+                important assignment are expected to participate
+                more often and make more valuable contribution that will have a meaningful impact on the debate and the
+                resolution process. Being an important assignment does not equate to a higher probability of winning an award.
+            </h5>
+            <h5><strong>Advanced Committees</strong> are committees characteristically designed to provide a uniquely
+                challenging experience for delegates with an existing background in debate.
+                For delegates that are new to IMMUNS and/or MUN,
+                the Secretariat recommends a more traditional committee in order to get the most out of our simulation.
+            </h5>
+        </div>
+    </div>
+
     <div class="container">
         <table class="comicGreen">
             <thead>
                 <tr>
-                    <th>Committee</th>
-                    <th>English</th>
-                    <th>Spanish</th>
+                    <th>Committee Type</th>
+                    <th>Available Spots</th>
+                    <th>Looking for</th>
+                    <th>Already Assigned to You</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>High School</td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSEA"]}} Available
-                                </h5>
+                {% for type_of_committee in type_of_committees %}
+                    {% set amount_of_assignments, amount_of_important_assignments = type_of_committee.get_amount_of_available_assignments() %}
+                    <tr>
+                        <td>{{ type_of_committee }}</td>
+                        <td>{{ amount_of_assignments }} Available</td>
+                        <td><input type="number" class="form-control" name="{{ type_of_committee.id }}" id="{{ type_of_committee.id }}" value="0" min="0" {% if amount_of_assignments ==0 %} disabled {% endif %} max="{{ amount_of_assignments }}" ></td>
+                        <td>{{ teacher.amount_of_students_for_committee_type(type_of_committee) }}</td>
+                    </tr>
 
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSE" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSSA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSS" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Middle School</td>
-                     <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSEA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSE" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSSA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSS" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+                    {% if amount_of_important_assignments %}
+                        <tr>
+                            <td>{{ type_of_committee }} - Important</td>
+                            <td>{{ amount_of_important_assignments }} Available</td>
+                            <td><input type="number" class="form-control" name="{{ type_of_committee.id }}_important" id="{{ type_of_committee.id }}_important" value="0" min="0" max="{{ amount_of_important_assignments }}" {% if amount_of_important_assignments ==0 %} disabled {% endif %} ></td>
+                            <td>{{ teacher.amount_of_students_for_committee_type(type_of_committee, True) }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <br>
-    <br>
-
-    <div class="container">
-        <h3>Please note that if you decide to give any of your delegates important roles, they are expected to participate
-        more often and make more valuable contribution that will have a meaningful impact on the debate and the
-        resolution process. Being an important delegate does not equate to a higher probability of winning an
-        award, chairs will not be informed about which delegates are designated by the Secretariat as important.</h3>
-
-        <table class="comicGreen">
-            <thead>
-                <tr>
-                    <th>Important Role</th>
-                    <th>English</th>
-                    <th>Spanish</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>High School</td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSEIA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSEI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSSIA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSSI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Middle School</td>
-                     <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSEIA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSEI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSSIA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSSI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
-    <br>
-
-    <div class="container">
-        <h3>These are the advanced committees: IMMUNS Advanced Committees are characteristically designed to provide a uniquely
-            challenging experience for delegates with an existing background in debate. For delegates that are new to IMMUNS and/or MUN,
-            the Secretariat recommends a more traditional committee in order to get the most out of our simulation.</h3>
-
-        <table class="comicGreen">
-            <thead>
-                <tr>
-                    <th>Advanced Committee</th>
-                    <th>English</th>
-                    <th>Spanish</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>High School</td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSEAA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSEA" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSSAA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSSA" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Middle School</td>
-                     <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSEAA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSEA" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSSAA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSSA" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <table class="comicGreen">
-            <thead>
-                <tr>
-                    <th>Advanced Committee Important</th>
-                    <th>English</th>
-                    <th>Spanish</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>High School</td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSEAIA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSEAI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["HSSAIA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "HSSAI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Middle School</td>
-                     <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSEAIA"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSEAI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["MSSAIA"]}} Available
-                                </h5>
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "MSSAI" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h3>Special sixth grade committe, hospitality must verify your students have a country.</h3>
-
-        <table class="comicGreen">
-            <thead>
-                <tr>
-                    <th>Committee</th>
-                    <th>English</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>6th Grade</td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <h5>
-                                    {{availability["G6EN"]}} Available
-                                </h5>
-
-                            </div>
-                            <div class="col-xs-6">
-                                <input type = "number" class="form-control" name = "G6EN" value = 0 min = 0 >
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
-    <br>
-    <div class="container">
+    <div class="container my-3">
         <div class="form-group">
             <button class="btn btn-default" type = "submit" value = "submit"> Submit </button>
         </div>
     </div>
+    </form>
 </div>
 
 {% endblock %}

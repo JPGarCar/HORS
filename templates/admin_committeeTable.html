@@ -1,28 +1,23 @@
 {% extends "layoutA.html" %}
 
-{% block titlebodyextra %}
-<div class="col-lg-4 col-lg-offset-5">
-    <form action="/adminOne" method="GET" style="display: inline;">
-    <button class="btn btn-default" type="submit"> Admin Page </button>
+{% block title_button_flex %}
+    <form action="/adminOne" method="GET">
+        <button class="btn btn-default" type="submit"> Admin Page </button>
     </form>
-    <form action ="/" method="GET" style="display: inline;">
+    <form action ="/" method="GET">
         <button class="btn btn-default" type="submit"> Login Page </button>
     </form>
-</div>
 {% endblock %}
-
-{% block extratitlebody %}{% endblock %}
 
 {% block body %}
 <form action="/admin_committeeTable" method="POST">
-    <div class="container">
+    <div class="container my-3">
          <table class="table table-hover table-striped" style="width:100%">
           <thead>
             <th>ID</th>
             <th>Name</th>
             <th>Type Of Committee</th>
             <th>Room</th>
-            <th>Advanced</th>
             <th>Number of Assignments</th>
             <th>Number of Delegates</th>
             <th>Number of Important Assignments</th>
@@ -38,9 +33,7 @@
                     <div class="modal-content">
                       <div class="modal-header">
                         <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                         <h4>Are you sure you want to delete the Committee. Doing so would delete all of the delgates and assignments connected to the committee.</h4>
@@ -56,15 +49,14 @@
                 <tr>
                     <td>{{committee.id}}</td>
                     <td>{{committee.name}}</td>
-                    <td>{{committee.typeOfCom}}</td>
+                    <td>{{committee.type_of_committee}}</td>
                     <td>{{committee.room}}</td>
-                    <td>{{committee.advanced}}</td>
-                    <td>{{committee.numOfAssignments()}}</td>
-                    <td>{{committee.numOfDelegates()}}</td>
-                    <td>{{committee.numOfImportantAssignments()}}</td>
-                    <td>{{committee.numOfImportantDelegates()}}</td>
+                    <td>{{committee.number_of_assignments()}}</td>
+                    <td>{{committee.number_of_delegates_assigned()}}</td>
+                    <td>{{committee.number_of_important_assignments()}}</td>
+                    <td>{{committee.number_of_important_delegates_assigned()}}</td>
                     <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{committee.id}}">Edit</button></td>
-                    <td><button class="btn btn-default" type="button" data-toggle="modal" data-target="#exampleModalCenter{{committee.id}}">Delete</button></td>
+                    <td><button class="btn btn-default" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{committee.id}}">Delete</button></td>
                 </tr>
             {% endfor %}
           </tbody>

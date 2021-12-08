@@ -1,12 +1,10 @@
 {% extends "layoutT.html" %}
 
-{% block titlebodyextra %}{% endblock %}
-
 {% block body %}
-<div class="container">
+<div class="container py-3">
     <h3> These are the country assignments for {{school}}. You can print this page using your default browser.</h3>
-    <br>
-    <div style="font-size:18px">
+
+    <div style="font-size:18px" class="my-2">
         <table class="table table-hover table-striped" style="width:100%">
             <tr>
                 <th>Committee</th>
@@ -17,7 +15,7 @@
             </tr>
             {% for delegate in delegates %}
                 <tr>
-                    <td>{{delegate.assignment.committee.name}} - {{delegate.assignment.committee.typeOfCom}}{% if delegate.assignment.important == "Yes" %} - Important Country {% endif %}{% if delegate.assignment.committee.advanced == "Yes" %} - Advanced Committee{% endif %}</td>
+                    <td>{{delegate.assignment.committee.name}} - {{delegate.assignment.committee.type_of_committee}}{% if delegate.assignment.important == True %} - Important Country {% endif %}</td>
                     <td>{{delegate.assignment.country}}</td>
                     <td>{{delegate.name}}</td>
                     <td>{{delegate.grade}}</td>

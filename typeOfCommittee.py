@@ -1,23 +1,37 @@
-from enum import Enum
+from models import TypeOfCommittee
 
+HSEN = TypeOfCommittee(level=TypeOfCommittee.Level.HIGHSCHOOL,
+                       language=TypeOfCommittee.Language.ENGLISH)
+MSEN = TypeOfCommittee(level=TypeOfCommittee.Level.MIDDLESCHOOL,
+                       language=TypeOfCommittee.Language.ENGLISH)
+HSSP = TypeOfCommittee(level=TypeOfCommittee.Level.HIGHSCHOOL,
+                       language=TypeOfCommittee.Language.SPANISH)
+MSSP = TypeOfCommittee(level=TypeOfCommittee.Level.MIDDLESCHOOL,
+                       language=TypeOfCommittee.Language.SPANISH)
+G6EN = TypeOfCommittee(level=TypeOfCommittee.Level.GRADESIX,
+                       language=TypeOfCommittee.Language.ENGLISH)
+RG6EN = TypeOfCommittee(level=TypeOfCommittee.Level.GRADESIX,
+                        language=TypeOfCommittee.Language.ENGLISH, is_remote=True)
 
-# if you add a type of committee you also need update the search params and the available and random country helpers
-class TypeOfCom(Enum):
-    HSEN = "HS EN"
-    MSEN = "MS EN"
-    HSSP = "HS SP"
-    MSSP = "MS SP"
-    G6EN = "G6 EN"
+HSENA = TypeOfCommittee(level=TypeOfCommittee.Level.HIGHSCHOOL,
+                        language=TypeOfCommittee.Language.ENGLISH, is_advanced=True)
+MSENA = TypeOfCommittee(level=TypeOfCommittee.Level.MIDDLESCHOOL,
+                        language=TypeOfCommittee.Language.ENGLISH, is_advanced=True)
+HSSPA = TypeOfCommittee(level=TypeOfCommittee.Level.HIGHSCHOOL,
+                        language=TypeOfCommittee.Language.SPANISH, is_advanced=True)
+MSSPA = TypeOfCommittee(level=TypeOfCommittee.Level.MIDDLESCHOOL,
+                        language=TypeOfCommittee.Language.SPANISH, is_advanced=True)
 
-    @staticmethod
-    def to_string(typeOfCom):
-        if typeOfCom == 'HS EN':
-            return 'High School English'
-        elif typeOfCom == 'MS EN':
-            return 'Middgle School English'
-        elif typeOfCom == 'HS SP':
-            return 'High School Spanish'
-        elif typeOfCom == 'MS SP':
-            return 'Middle School Spanish'
-        else:
-            return '6th Grade English'
+# remote committees
+REHSEN = TypeOfCommittee(level=TypeOfCommittee.Level.HIGHSCHOOL,
+                         language=TypeOfCommittee.Language.ENGLISH, is_remote=True, has_important_assignments=False)
+REHSSP = TypeOfCommittee(level=TypeOfCommittee.Level.HIGHSCHOOL,
+                         language=TypeOfCommittee.Language.SPANISH, is_remote=True, has_important_assignments=False)
+REMSEN = TypeOfCommittee(level=TypeOfCommittee.Level.MIDDLESCHOOL,
+                         language=TypeOfCommittee.Language.ENGLISH, is_remote=True, has_important_assignments=False)
+REMSSP = TypeOfCommittee(level=TypeOfCommittee.Level.MIDDLESCHOOL,
+                         language=TypeOfCommittee.Language.SPANISH, is_remote=True, has_important_assignments=False)
+
+TypeOfCommitteeList = [
+    HSEN, HSSP, MSEN, MSSP, REHSEN, REHSSP, REMSEN, REMSSP, HSENA, HSSPA, MSENA, MSSPA, G6EN, RG6EN
+]

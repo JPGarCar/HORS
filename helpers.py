@@ -1,24 +1,9 @@
-from typeOfCommittee import TypeOfCom
-from Important import Important
-from advanced import Advanced
-from grades import Grades
-
-###############################################################################################################################################################
-###############################################################################################################################################################
-#########################################################  Functions   ########################################################################################
-###############################################################################################################################################################
-###############################################################################################################################################################
-
-# THESE ARE ALL THE HELPER FUNCTIONS
-
-
-
-### getSpecial (String -> Number or None)
-### String is a special code only
-### produce number of possible assignemnts from inputed special code, or None if invalid special code
-### usses first two and 6th and 7th char to get the Number
+# getSpecial (String -> Number or None)
+# String is a special code only
+# produce number of possible assignemnts from inputed special code, or None if invalid special code
+# usses first two and 6th and 7th char to get the Number
 def getSpecial(string):
-    ## gets the chars needed
+    # gets the chars needed
     first = string[0:2]
     second = string[6:8]
     # tries to convert the chars to Integers, if not possible return None
@@ -38,19 +23,8 @@ def getSpecial(string):
     return None
 
 
-### assginToInt (String -> Number)
-### convert string to Number, if "" then 0, also gets rid of decimal value
-def assignToInt(string):
-    if string == "":
-        return 0
-    elif "." in string:
-        string = string[:-2]
-        return int(string)
-    else:
-        return int(string)
-
-### replaceSpecial (String -> String)
-### strips a string from special characters
+# replaceSpecial (String -> String)
+# strips a string from special characters
 def replaceSpecial(string):
     string = string.replace(" ", "")
     string = string.replace("_", "")
@@ -58,8 +32,3 @@ def replaceSpecial(string):
     string = string.replace("'", "")
     string = string.replace(".", "")
     return string
-
-### return the list of all possible grades plus an empty string at the beginning
-def getGrades():
-    enum_list = list(map(lambda c: c.value, Grades))
-    return enum_list

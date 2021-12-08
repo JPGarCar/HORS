@@ -1,12 +1,11 @@
 {% extends "layoutT.html" %}
 
-{% block titlebodyextra %}{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h3> This is the Sign Up Page, please fill in the information below. </h3> <br>
+<div class="container my-3">
+    <h3> This is the Sign Up Page, please fill in the information below. </h3>
 
-    <form action="/user_signUp" method = "post">
+    <form action="/user_signUp" method = "post" class="my-3">
         <fieldset>
             <div class="form-group">
                 <h3> Full Name: </h3>
@@ -33,10 +32,8 @@
                 <input type = "text" class="form-control" name = "confirmationCode" required >
             </div>
 
-            <br
-            <h2> Please remeber to send a picture of you to the Hospitality department at hospitality@immuns.org </h2>
-            <br>
-            <div class="form-group">
+            <div class="form-group mt-4">
+                <h4> Please remeber to send a picture of you to the Hospitality department at hospitality@immuns.org </h4>
                 <button class="btn btn-default" type = "submit" value = "Submit"> Submit </button>
             </div>
         </fieldset>

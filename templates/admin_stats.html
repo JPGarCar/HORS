@@ -1,80 +1,49 @@
 {% extends "layoutA.html" %}
 
-{% block titlebodyextra %}
-<div class="col-lg-4 col-lg-offset-5">
-    <form action="/adminOne" method="GET" style="display: inline;">
+{% block title_button_flex %}
+    <form action="/adminOne" method="GET">
         <button class="btn btn-default" type="submit"> Admin Page </button>
     </form>
-    <form action ="/" method="GET" style="display: inline;">
+    <form action ="/" method="GET">
         <button class="btn btn-default" type="submit"> Login Page </button>
     </form>
-</div>
 {% endblock %}
 
-{% block extratitlebody %}{% endblock %}
-
 {% block body %}
-<div class="container">
-    <h2> This is the stats page.</h2><br><br><br>
-    <div class="row">
-        <div class="col-md-3">
-            <h3>Total number of assigments:</h3><br>
-            <h5>HS EN Total: {{hsenT}}</h5><br>
-            <h5>HS SP Total: {{hsspT}}</h5><br>
-            <h5>HS EN Important Total: {{hseniT}}</h5><br>
-            <h5>HS SP Important Total: {{hsspiT}}</h5><br>
-            <h5>MS EN Total: {{msenT}}</h5><br>
-            <h5>MS SP Total: {{msspT}}</h5><br>
-            <h5>MS EN Important Total: {{mseniT}}</h5><br>
-            <h5>MS SP Important Total: {{msspiT}}</h5><br>
-        </div>
-        <div class="col-md-3">
-            <h3>Number of assignments available:</h3><br>
-            <h5>HS EN Available: {{hsenA}}</h5><br>
-            <h5>HS SP Available: {{hsspA}}</h5><br>
-            <h5>HS EN Important Available: {{hseniA}}</h5><br>
-            <h5>HS SP Important Available: {{hsspiA}}</h5><br>
-            <h5>MS EN Available: {{msenA}}</h5><br>
-            <h5>MS SP Available: {{msspA}}</h5><br>
-            <h5>MS EN Important Available: {{mseniA}}</h5><br>
-            <h5>MS SP Important Available: {{msspiA}}</h5><br>
-        </div>
-
-        <div class="col-md-3">
-            <h3>Total number of Advanced assigments:</h3><br>
-            <h5>HS EN Total: {{hsenaT}}</h5><br>
-            <h5>HS SP Total: {{hsspaT}}</h5><br>
-            <h5>HS EN Important Total: {{hsenaiT}}</h5><br>
-            <h5>HS SP Important Total: {{hsspaiT}}</h5><br>
-            <h5>MS EN Total: {{msenaT}}</h5><br>
-            <h5>MS SP Total: {{msspaT}}</h5><br>
-            <h5>MS EN Important Total: {{msenaiT}}</h5><br>
-            <h5>MS SP Important Total: {{msspaiT}}</h5><br>
-        </div>
-        <div class="col-md-3">
-            <h3>Number of Advanced assignments available:</h3><br>
-            <h5>HS EN Available: {{hsenaA}}</h5><br>
-            <h5>HS SP Available: {{hsspaA}}</h5><br>
-            <h5>HS EN Important Available: {{hsenaiA}}</h5><br>
-            <h5>HS SP Important Available: {{hsspaiA}}</h5><br>
-            <h5>MS EN Available: {{msenaA}}</h5><br>
-            <h5>MS SP Available: {{msspaA}}</h5><br>
-            <h5>MS EN Important Available: {{msenaiA}}</h5><br>
-            <h5>MS SP Important Available: {{msspaiA}}</h5><br>
-        </div>
+<div class="container my-3">
+    <div class="my-3">
+        <h3>Committee Type Information:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Committee Type</th>
+                    <th scope="col">Total Assignments</th>
+                    <th scope="col">Available Assignments</th>
+                    <th scope="col">Total Important Assignments</th>
+                    <th scope="col">Available Important Assignments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type_of_committee in type_of_committees %}
+                    {% set total, total_important = type_of_committee.get_amount_of_assignments() %}
+                    {% set available, available_important = type_of_committee.get_amount_of_available_assignments() %}
+                    <tr>
+                        <th scope="row">{{ type_of_committee }}</th>
+                        <td>{{ total }}</td>
+                        <td>{{ available }}</td>
+                        <td>{{ total_important }}</td>
+                        <td>{{ available_important }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="row">
-        <h5>Total Available: {{totalA}}</h5>
-        <h5>Total: {{totalT}}</h5>
-    </div>
-</div>
 
-<div class="container">
-    <h3>Committee Information:</h3><br>
-    <div class="row">
-        <div class="col">
-            <table class="table table-hover">
-                <thead>
+    <div class="my-3">
+        <h3>Committee Information:</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
                     <th scope="col">Committee</th>
                     <th scope="col">Total Assignments</th>
                     <th scope="col">Assignments in Use</th>
@@ -82,24 +51,23 @@
                     <th scope="col">Total Important Assignments</th>
                     <th scope="col">Important Assignments in Use</th>
                     <th scope="col">Important Assignments Available</th>
-                </thead>
-                <tbody>
-                    {% for committee in committees %}
-                        <tr>
-                            <td>{{committee.name}}</td>
-                            <td>{{committee.numOfAssignments()}}</td>
-                            <td>{{committee.numOfDelegates()}}</td>
-                            <td {% if committee.codeRed(False) %} class="table-danger" {% elif committee.codeYellow(False) %} class="table-warning" {% endif %}>{{committee.numOfAssignments() - committee.numOfDelegates()}}</td>
-                            <td>{{committee.numOfImportantAssignments()}}</td>
-                            <td>{{committee.numOfImportantDelegates()}}</td>
-                            <td>{{committee.numOfImportantAssignments() - committee.numOfImportantDelegates()}}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                </tr>
+            </thead>
+            <tbody>
+            {% for committee in committees %}
+                <tr>
+                    <th scope="row">{{committee.name}}</th>
+                    <td>{{committee.number_of_assignments()}}</td>
+                    <td>{{committee.number_of_delegates_assigned()}}</td>
+                    <td {% if committee.is_more_than_two_thirds_assignments_available(False) %} class="table-danger" {% elif committee.is_more_than_half_assignments_available(False) %} class="table-warning" {% endif %}>{{committee.number_of_assignments() - committee.number_of_delegates_assigned()}}</td>
+                    <td>{{committee.number_of_important_assignments()}}</td>
+                    <td>{{committee.number_of_important_delegates_assigned()}}</td>
+                    <td>{{committee.number_of_important_assignments() - committee.number_of_important_delegates_assigned()}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-
 </div>
 
 
