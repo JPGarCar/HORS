@@ -19,5 +19,32 @@
     <form action="/admin_create_type_of_committee" method="POST">
         {{ render_form(form) }}
     </form>
+
+    <div class="my-3">
+        <h3>Current Committee Types:</h3>
+        <h5>If you delete a committee type, you will also delete all the committees associated to the committee type.</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Committee Type</th>
+                    <th scope="col">Number of Committees of this type</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for committee_type in committee_types_list %}
+                    <tr>
+                        <th scope="row">{{ committee_type.__str__() }}</th>
+                        <td>{{ committee_type.committees|length }}</td>
+                        <td>
+                            <form action="{{ url_for('admin_delete_type_of_committee', type_of_committee_id=committee_type.id) }}" method="post">
+                                <button class="btn btn-outline-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

@@ -237,7 +237,7 @@ def user_newTeacherPage():
                     flash(error_list[error])
                 return redirect(url_for('user_newTeacherPage'))
             else:
-                return redirect(url_for('user_newTeacherPage'))
+                return redirect(url_for('user_oldTeacherPage'))
         else:
             # if incorrect number of assignments, return same page with number of assignments remaining
             num_rem = target - teacher.number_of_students()
@@ -1085,7 +1085,7 @@ def admin_changeRooms():
 def admin_create_type_of_committee():
     form = TypeOfCommitteeForm(request.form)
 
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST' and form.validate() and session["adminIn"] is True:
         type_of_committee = TypeOfCommittee(
             level=form.level.data, language=form.language.data,
             is_remote=form.is_remote.data, is_advanced=form.is_advanced.data,
@@ -1096,8 +1096,23 @@ def admin_create_type_of_committee():
         db.session.commit()
         flash('Type of committee {} added successfully!'.format(type_of_committee.__str__()))
         return redirect(url_for('adminOne'))
+    elif session["adminIn"] is True:
+        committee_types_list: list[TypeOfCommittee] = TypeOfCommittee.query.all()
+        return render_template('admin_add_new_type_of_committee.html', form=form, committee_types_list=committee_types_list)
 
-    return render_template('admin_add_new_type_of_committee.html', form=form)
+
+@application.route("/admin_delete_type_of_committee/<type_of_committee_id>", methods=['POST'])
+def admin_delete_type_of_committee(type_of_committee_id):
+    if session['adminIn'] is True:
+        type_of_committee: TypeOfCommittee = TypeOfCommittee.query.get(type_of_committee_id)
+        committee_list: list[Committee] = type_of_committee.committees
+        for committee in committee_list:
+            db.session.delete(committee)
+
+        db.session.delete(type_of_committee)
+        db.session.commit()
+
+        return redirect(url_for('admin_create_type_of_committee'))
 
 
 ###########################
