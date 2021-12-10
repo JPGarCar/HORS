@@ -8,20 +8,23 @@ from flask_bootstrap import Bootstrap
 from flask_security import SQLAlchemyUserDatastore, Security, roles_required, login_user, login_required
 from flask_security.utils import verify_password, hash_password, logout_user
 from math import ceil
-from sqlalchemy import or_
 
 from forms import TypeOfCommitteeForm
 from models import Teacher, Committee, Assignment, Delegate, TypeOfCommittee, db, User, Role
 from typeOfCommittee import TypeOfCommitteeList
 import helpers
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 application = Flask(__name__)
-application.secret_key = "b/xc7&xc9qx00fasdfedseds#xc2!xc3?xd1¡xb1U¿xbeo{xb0]xc6*xc2"
+application.secret_key = os.getenv("SECRET_KEY")
 application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
 application.config["SQLALCHEMY_ECHO"] = False
-application.config["DEBUG"] = True
-application.config["SECURITY_PASSWORD_SALT"] = "b/xc7&xc9qx00fasdfedseds#xc2!xc3?xd1¡xb1U¿xbeo{xb0]xc6*xc2"
+application.config["DEBUG"] = False
+application.config["SECURITY_PASSWORD_SALT"] = os.getenv("SECURITY_PASSWORD_SALT")
 
 bootstrap = Bootstrap(application)
 db.init_app(application)
@@ -426,10 +429,10 @@ def adminOne():
                 TypeOfCommittee.language == TypeOfCommittee.Language.SPANISH).all()
             gen_filter = "Middle School Spanish"
         elif value == "Taken":
-            assignments = Assignment.query.filter(or_(Assignment.delegate != None)).all()
+            assignments = Assignment.query.filter(Assignment.delegate != None).all()
             gen_filter = "Taken"
         elif value == "NotTaken":
-            assignments = Assignment.query.filter(or_(Assignment.delegate == None)).all()
+            assignments = Assignment.query.filter(Assignment.delegate == None).all()
             gen_filter = "Taken"
 
         if assignments and gen_filter:
