@@ -119,20 +119,23 @@
             assignment and delegate from the teacher.</h4>
         <button class="btn btn-default" name="Button" type="submit" value="DeleteBulkInfo">Bulk Un-assign</button>
         <button class="btn btn-default" name="Button" type="submit" value="DeleteBulkRow">Bulk Delete Row</button>
-        <table class="table table-hover table-striped" style="width:100%" id="selectedColumn">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped my-3">
             <thead>
-                <th>SELECT</th>
-                <th>  ID  </th>
-                <th>Committee</th>
-                <th>Type Of Committee</th>
-                <th>Country</th>
-                <th>Delegate Name</th>
-                <th>Delegate Grade</th>
-                <th>Delegate School</th>
-                <th>Important</th>
-                <th>Un-assign Delegate</th>
-                <th>Edit</th>
-                <th>Delete Row</th>
+                <tr>
+                    <th scope="col">SELECT</th>
+                    <th scope="col">  ID  </th>
+                    <th scope="col">Committee</th>
+                    <th scope="col">Type Of Committee</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">Delegate Name</th>
+                    <th scope="col">Delegate Grade</th>
+                    <th scope="col">Delegate School</th>
+                    <th scope="col">Important</th>
+                    <th scope="col">Un-assign Delegate</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete Row</th>
+                </tr>
             </thead>
             <tbody>
                 {% for assignment in assignments %}
@@ -157,7 +160,7 @@
                         </div>
                     <tr>
                         <td><input type="checkbox" value={{assignment.id}} name="Selected"></td>
-                        <td>{{assignment.country_id}} </td>
+                        <th  scope="row">{{assignment.country_id}} </th>
                         <td> {{assignment.committee.name}}</td>
                         <td>{{assignment.committee.type_of_committee}}</td>
                         <td>{{assignment.country}}</td>
@@ -178,7 +181,7 @@
                 {% endfor %}
              </tbody>
         </table>
+        </div>
     </div>
 </form>
-</>
 {% endblock %}

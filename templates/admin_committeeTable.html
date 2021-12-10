@@ -2,65 +2,83 @@
 
 {% block title_button_flex %}
     <form action="/adminOne" method="GET">
-        <button class="btn btn-default" type="submit"> Admin Page </button>
+        <button class="btn btn-default" type="submit"> Admin Page</button>
     </form>
-    <form action ="/" method="GET">
-        <button class="btn btn-default" type="submit"> Login Page </button>
+    <form action="/" method="GET">
+        <button class="btn btn-default" type="submit"> Login Page</button>
     </form>
 {% endblock %}
 
 {% block body %}
-<form action="/admin_committeeTable" method="POST">
-    <div class="container my-3">
-         <table class="table table-hover table-striped" style="width:100%">
-          <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Type Of Committee</th>
-            <th>Room</th>
-            <th>Number of Assignments</th>
-            <th>Number of Delegates</th>
-            <th>Number of Important Assignments</th>
-            <th>Number of Important Delegates</th>
-            <th>Edit Committee</th>
-            <th>Delete Committee</th>
-          </thead>
-          <tbody>
-            {% for committee in committees %}
-              <!-- Modal -->
-                <div class="modal fade" id="exampleModalCenter{{committee.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <h4>Are you sure you want to delete the Committee. Doing so would delete all of the delgates and assignments connected to the committee.</h4>
-                      </div>
-                      <div class="modal-footer">
-                        <div class="form-group">
-                            <button class="btn btn-primary" name="Button" type="submit" value="DE_{{committee.id}}">Yes I Am Sure</button>
+    <form action="/admin_committeeTable" method="POST">
+        <div class="container my-3">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type Of Committee</th>
+                            <th scope="col">Room</th>
+                            <th scope="col">Number of Assignments</th>
+                            <th scope="col">Number of Delegates</th>
+                            <th scope="col">Number of Important Assignments</th>
+                            <th scope="col">Number of Important Delegates</th>
+                            <th scope="col">Edit Committee</th>
+                            <th scope="col">Delete Committee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for committee in committees %}
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModalCenter{{ committee.id }}" tabindex="-1" role="dialog"
+                             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title" id="exampleModalCenterTitle"
+                                            style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Are you sure you want to delete the Committee. Doing so would delete all of the
+                                            delgates and assignments connected to the committee.</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" name="Button" type="submit"
+                                                    value="DE_{{ committee.id }}">Yes I Am Sure
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <tr>
-                    <td>{{committee.id}}</td>
-                    <td>{{committee.name}}</td>
-                    <td>{{committee.type_of_committee}}</td>
-                    <td>{{committee.room}}</td>
-                    <td>{{committee.number_of_assignments()}}</td>
-                    <td>{{committee.number_of_delegates_assigned()}}</td>
-                    <td>{{committee.number_of_important_assignments()}}</td>
-                    <td>{{committee.number_of_important_delegates_assigned()}}</td>
-                    <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{committee.id}}">Edit</button></td>
-                    <td><button class="btn btn-default" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{committee.id}}">Delete</button></td>
-                </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
-</form>
+                        <tr>
+                            <th scope="row">{{ committee.id }}</th>
+                            <td>{{ committee.name }}</td>
+                            <td>{{ committee.type_of_committee }}</td>
+                            <td>{{ committee.room }}</td>
+                            <td>{{ committee.number_of_assignments() }}</td>
+                            <td>{{ committee.number_of_delegates_assigned() }}</td>
+                            <td>{{ committee.number_of_important_assignments() }}</td>
+                            <td>{{ committee.number_of_important_delegates_assigned() }}</td>
+                            <td>
+                                <button class="btn btn-default" type="submit" name="Button" value="ED_{{ committee.id }}">
+                                    Edit
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-default" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModalCenter{{ committee.id }}">Delete
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
 {% endblock %}

@@ -2,81 +2,99 @@
 
 {% block title_button_flex %}
     <form action="/adminOne" method="GET">
-        <button class="btn btn-default" type="submit"> Admin Page </button>
+        <button class="btn btn-default" type="submit"> Admin Page</button>
     </form>
-    <form action ="/" method="GET">
-        <button class="btn btn-default" type="submit"> Login Page </button>
+    <form action="/" method="GET">
+        <button class="btn btn-default" type="submit"> Login Page</button>
     </form>
 {% endblock %}
 
 {% block body %}
-<form action="/admin_delegatesTables" method="POST">
-    <div class="container my-3">
-        <h3> Search Parameters:</h3>
-        <div class="row">
-            <div class="col-md-4">
-                <label for="schoolDropDown">School </label>
-                <select name="schoolDropDown" class="form-select" id="schoolDropDown">
-                    <option value="None"> None</option>
-                {% for teacher in teachers %}
-                     <option value="{{teacher.id}}">{{teacher.school}}</option>
-                {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-4 ">
-                 <label for="delegateName">Delegate name: </label>
-                 <input type="text" class="form-control" name="delegateName" id="delegateName">
-            </div>
-            <div class="col-md-2 center-block">
-                <button class="btn btn-primary" name="Button" type="submit" value="Search">Search</button>
+    <form action="/admin_delegatesTables" method="POST">
+        <div class="container my-3">
+            <h3> Search Parameters:</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="schoolDropDown">School </label>
+                    <select name="schoolDropDown" class="form-select" id="schoolDropDown">
+                        <option value="None"> None</option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.school }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 ">
+                    <label for="delegateName">Delegate name: </label>
+                    <input type="text" class="form-control" name="delegateName" id="delegateName">
+                </div>
+                <div class="col-md-2 center-block">
+                    <button class="btn btn-primary" name="Button" type="submit" value="Search">Search</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="container my-3">
-         <table class="table table-hover table-striped" style="width:100%">
-          <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>School</th>
-            <th>Committee</th>
-            <th>Country</th>
-            <th>Edit Delegate</th>
-            <th>Delete Delegate</th>
-          </thead>
-          <tbody>
-            {% for delegate in delegates %}
-                <!-- Modal -->
-                    <div class="modal fade" id="exampleModalCenter{{delegate.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h2 class="modal-title" id="exampleModalCenterTitle" style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <h4>Are you sure you want to delete the delegate. Doing so would delete the delegate and would free its assignment.</h4>
-                          </div>
-                          <div class="modal-footer">
-                            <div class="form-group">
-                                <button class="btn btn-primary" name="Button" type="submit" value="DE_{{delegate.id}}">Yes I Am Sure</button>
+        <div class="container my-3">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">School</th>
+                        <th scope="col">Committee</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">Edit Delegate</th>
+                        <th scope="col">Delete Delegate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for delegate in delegates %}
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter{{ delegate.id }}" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 class="modal-title" id="exampleModalCenterTitle"
+                                        style="color:red; font-weight: bold" align="center">HOLD IT THERE</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>Are you sure you want to delete the delegate. Doing so would delete the delegate
+                                        and would free its assignment.</h4>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" name="Button" type="submit"
+                                                value="DE_{{ delegate.id }}">Yes I Am Sure
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>
                     </div>
-                <tr>
-                    <td>{{delegate.id}}</td>
-                    <td>{{delegate.name}}</td>
-                    <td>{{delegate.teacher.school}}</td>
-                    <td>{{delegate.assignment.committee.name}}  {{delegate.assignment.committee.type_of_committee}}</td>
-                    <td>{{delegate.assignment.country}}</td>
-                    <td><button class="btn btn-default" type="submit" name="Button" value="ED_{{delegate.id}}">Edit</button></td>
-                    <td><button class="btn btn-default" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{delegate.id}}">Delete</button></td>
-                </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
-</form>
+                    <tr>
+                        <th scope="row">{{ delegate.id }}</th>
+                        <td>{{ delegate.name }}</td>
+                        <td>{{ delegate.teacher.school }}</td>
+                        <td>{{ delegate.assignment.committee.name }} {{ delegate.assignment.committee.type_of_committee }}</td>
+                        <td>{{ delegate.assignment.country }}</td>
+                        <td>
+                            <button class="btn btn-default" type="submit" name="Button" value="ED_{{ delegate.id }}">
+                                Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-default" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModalCenter{{ delegate.id }}">Delete
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </form>
 {% endblock %}
