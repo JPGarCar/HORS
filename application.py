@@ -11,7 +11,6 @@ from math import ceil
 
 from forms import TypeOfCommitteeForm
 from models import Teacher, Committee, Assignment, Delegate, TypeOfCommittee, db, User, Role
-from typeOfCommittee import TypeOfCommitteeList
 import helpers
 from dotenv import load_dotenv
 import os
@@ -842,10 +841,6 @@ def admin_specialFunctions():
         elif value == "DeleteEntireCommittee":
             committee = Committee.query.get(request.form.get("committeeDropDown", type=int))
             db_session.delete(committee)
-
-        elif value == "CreateCommitteeTypes":
-            for type_of_committee in TypeOfCommitteeList:
-                db_session.add(type_of_committee)
 
         db_session.commit()
         return redirect('admin_specialFunctions')
