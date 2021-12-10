@@ -18,12 +18,12 @@ import os
 
 load_dotenv()
 
-application = Flask(__name__)
+application = app = Flask(__name__)
 application.secret_key = os.getenv("SECRET_KEY")
 application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
 application.config["SQLALCHEMY_ECHO"] = False
-application.config["DEBUG"] = False
+application.config["DEBUG"] = True
 application.config["SECURITY_PASSWORD_SALT"] = os.getenv("SECURITY_PASSWORD_SALT")
 
 bootstrap = Bootstrap(application)

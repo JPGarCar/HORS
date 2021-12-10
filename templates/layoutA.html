@@ -51,32 +51,39 @@
 
     {% block head_content %}{% endblock %}
 </head>
-<body>
-    <div class="container-fluid pt-3 pb-2" style="background-color: rgb(153,0,0);">
-        <h1 class="text-center"> Immuns Registration Admin Console </h1>
-        <div class="container py-2">
-            <div class="d-flex flex-row justify-content-evenly">
-                {% block title_button_flex %}{% endblock %}
+<body class="d-flex flex-column h-100 justify-content-between">
+    <div class="container-fluid p-0 pb-3">
+        <div class="container-fluid pt-3 pb-2" style="background-color: rgb(153,0,0);">
+            <h1 class="text-center"> Immuns Registration Admin Console </h1>
+            <div class="container py-2">
+                <div class="d-flex flex-row justify-content-evenly">
+                    {% block title_button_flex %}{% endblock %}
+                </div>
+                {% block titlebodyextra %}{% endblock %}
             </div>
-            {% block titlebodyextra %}{% endblock %}
         </div>
+
+        {% block extratitlebody %}{% endblock %}
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div id="flashing" class="container-fluid py-2 pt-3" style="background-color: rgba(255, 255, 0, .4);">
+                    <ol class="list-unstyled">
+                        {% for message in messages %}
+                            <li><strong><h3 class="text-center m-0">{{ message }}</h3></strong></li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block body %}{% endblock %}
     </div>
 
-    {% block extratitlebody %}{% endblock %}
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div id="flashing" class="container-fluid py-2 pt-3" style="background-color: rgba(255, 255, 0, .4);">
-                <ol class="list-unstyled">
-                    {% for message in messages %}
-                        <li><strong><h3 class="text-center m-0">{{ message }}</h3></strong></li>
-                    {% endfor %}
-                </ol>
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    {% block body %}{% endblock %}
+    <footer class="container-fluid text-white p-2 d-flex flex-row justify-content-between" style="background-color: rgb(153,0,0);">
+        <h6 class="m-0">Made with love by <a href="https://github.com/JPGarCar" class="text-white">JP Garcia</a> </h6>
+        <h6 class="m-0"><a href="mailto: juapgarc@gmail.com" class="text-white">Interested in this software?</a></h6>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
