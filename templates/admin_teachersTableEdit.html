@@ -38,11 +38,11 @@
             <h3>School</h3> <input type="text" class="form-control" name="school" value="{{teacher.school}}"/> <br>
         </div>
         <div class="form-group">
-            <h3>Email</h3> <input type="text" class="form-control" name="email" value="{{teacher.email}}"/> <br>
+            <h3>Email</h3> <input type="text" class="form-control" name="email" value="{{teacher.user.email}}"/> <br>
         </div>
         <div class="form-group">
         <h3> New Password    (DO NOT CHANGE UNLESS YOU WANT TO CHANGE THE PASSWORD) </h3>
-        <input type="text" class="form-control" name="password" value="{{teacher.password}}"/>
+        <input type="text" class="form-control" name="password" value="{{teacher.user.password}}"/>
         <button class="btn btn-default" type="button" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Change Password</button>
         </div>
         <div class="form-group">

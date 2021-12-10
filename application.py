@@ -5,25 +5,28 @@ from string import ascii_uppercase
 
 from flask import Flask, redirect, render_template, request, url_for, session, flash
 from flask_bootstrap import Bootstrap
+from flask_security import SQLAlchemyUserDatastore, Security, roles_required, login_user, login_required
+from flask_security.utils import verify_password, hash_password, logout_user
 from math import ceil
-from passlib.apps import custom_app_context as pwd_context
 from sqlalchemy import or_
 
 from forms import TypeOfCommitteeForm
-from models import Teacher, Committee, Assignment, Delegate, TypeOfCommittee, db
+from models import Teacher, Committee, Assignment, Delegate, TypeOfCommittee, db, User, Role
 from typeOfCommittee import TypeOfCommitteeList
 import helpers
 
-# defines variable 'app' to the flask
 application = Flask(__name__)
 application.secret_key = "b/xc7&xc9qx00fasdfedseds#xc2!xc3?xd1¡xb1U¿xbeo{xb0]xc6*xc2"
 application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
 application.config["SQLALCHEMY_ECHO"] = False
+application.config["DEBUG"] = True
+application.config["SECURITY_PASSWORD_SALT"] = "b/xc7&xc9qx00fasdfedseds#xc2!xc3?xd1¡xb1U¿xbeo{xb0]xc6*xc2"
 
 bootstrap = Bootstrap(application)
-
 db.init_app(application)
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(application, user_datastore)
 
 # if there is any session data on the users computer then clear it
 if session:
@@ -31,83 +34,72 @@ if session:
     session.pop('_flashes', None)
 
 
-def return_admin_page(assignments, serchParam: str | None):
+def return_admin_page(assignments, search_parm: str | None):
     cList = Committee.get_committee_dropdown()
     # grab all assignemnts from generalList if current assignemnts is empty string
     if assignments is None:
         assignments = Assignment.query.all()
     # return admin.html with assignemnts as rows, sList as committees for drop down and serchParam as flash message
-    return render_template("admin.html", assignments=assignments, committees=cList, error=serchParam)
+    return render_template("admin.html", assignments=assignments, committees=cList, error=search_parm)
 
 
-# no globals are used, instead the session module from flask is used, it uses cookies so that is way better.
+@application.before_first_request
+def application_init():
+    db.create_all()
+    user_datastore.find_or_create_role(name='teacher', description='A teacher from any school')
+    admin_role = user_datastore.find_or_create_role(name='admin', description='An admin taking care of the application.')
+    admin = user_datastore.get_user('admin@gmail.com')
+    if not admin:
+        admin = user_datastore.create_user(email='admin@gmail.com', password=hash_password('adminPassword'))
+    user_datastore.add_role_to_user(admin, admin_role)
+    db.session.commit()
 
 
-# / (GET POST -> templateRendered)
-# main route to the sign in page,
-# GET: returns the registration template
-# POST: signs in a teacher if email and password match or sign admin
 @application.route("/", methods=["GET", "POST"])
-def user_registration():
-    # GET
-    if request.method == "GET":
-        return render_template("user_registration.html")
+def home_page():
+    """
+    POST -> Sign in a user
+    """
+    if request.method == "POST":
+        user = user_datastore.get_user(request.form["signInEmail"])
 
-    # POST
-    elif request.method == "POST":
-        # restart seesion
-        session["currentTeacher"] = None
+        if user and verify_password(request.form["signInPassword"], user.password):
+            login_user(user)
 
-        # Check In Admin #
-        if request.form["signInEmail"] == "admin@gmail.com" and pwd_context.verify(request.form["signInPassword"],
-                                                                                   pwd_context.hash("adminPassword")):
-            session["adminIn"] = True
-            return return_admin_page(None, None)
+            if user.has_role(user_datastore.find_role('admin')):
+                session["adminIn"] = True
+                return return_admin_page(None, None)
 
-        # Sign In Teacher #
-        # grabs the Teacher from table teacher with the inputed email
-        teachers = Teacher.query.filter(Teacher.email == request.form["signInEmail"]).all()
+            teacher: Teacher = user.teacher
 
-        # loops over the teacher, if there is no teacher it will not enter the loop and return the same page with flash
-        for teacher in teachers:
-            # check the hashed password
-            if pwd_context.verify(request.form["signInPassword"], teacher.password):
-                if teacher.name != "":
-                    # assign session variables
-                    session["currentTeacher"] = teacher.get_teacher_session()
-                    session["currentUserId"] = teacher.id
+            # assign session variables
+            session["currentUserId"] = teacher.id
 
-                    max_number_of_possible_students = teacher.max_number_of_students_possible()
-                    number_of_students = teacher.number_of_students()
+            max_number_of_possible_students = teacher.max_number_of_students_possible()
+            number_of_students = teacher.number_of_students()
 
-                    # if the teacher has same assignments as his code permits then go to teacher page old
-                    if number_of_students == max_number_of_possible_students:
-                        return redirect(url_for('user_oldTeacherPage'))
-                    # else go get more delegates
-                    else:
-                        return redirect(url_for('user_newTeacherPage'))
+            # if the teacher has same assignments as his code permits then go to teacher page old
+            if number_of_students == max_number_of_possible_students:
+                return redirect(url_for('user_oldTeacherPage'))
+            # else go get more delegates
+            else:
+                return redirect(url_for('user_newTeacherPage'))
+
+        else:
             flash(
                 "You have entered an incorrect password, please try again. "
                 "If the problem persists, call your HOSPITALITY member for asistance.")
-            return redirect(url_for('user_registration'))
-        flash(
-            "You have entered an incorrect email, please try again. "
-            "If the problem persists, call your HOSPITALITY member for asistance.")
-        return redirect(url_for('user_registration'))
+            return redirect(url_for('home_page'))
+
+    return render_template("home_page.html")
 
 
-# /user_signUp (GET POST -> templateRendered)
-# user_signUp reoute to sign up a new teacher
-# GET: returns the user_signUp template
-# POST: checks if all fields are filled and correct and makes the new teacher
 @application.route("/user_signUp", methods=["POST", "GET"])
 def user_signUp():
-    # GET
-    if request.method == "GET":
-        return render_template("user_signUp.html")
-
-    # POST
-    elif request.method == "POST":
+    """
+    POST -> Create a new teacher user
+    """
+    if request.method == "POST":
         # Validate confirmation code #
         # checks confirmation code validity using getSpecial() if not vaild return same page with flash error
         if helpers.getSpecial(request.form["confirmationCode"]) is None:
@@ -116,11 +108,12 @@ def user_signUp():
             return redirect(url_for('user_signUp'))
 
         else:
-            # checks if email is already in table
-            email = Teacher.query.filter_by(email=request.form["email"]).first()
+            email = request.form["email"]
 
-            # if email inputed is already in use return same page with flash error
-            if email is not None:
+            user = user_datastore.get_user(email)
+
+            # if email inputted is already in use return same page with flash error
+            if user is not None:
                 flash(
                     "The email you have entered is already in use. If you do not remember your "
                     "password please contact your HOSPITALITY member.")
@@ -131,14 +124,21 @@ def user_signUp():
                 flash("The passwords that you have entered do not match, please try again.")
                 return redirect(url_for('user_signUp'))
 
-            # Adding teacher #
-            teacher = Teacher(request.form["personName"], request.form["email"],
-                              pwd_context.hash(request.form["password"]), request.form["school"],
-                              request.form["confirmationCode"])
+            user = user_datastore.create_user(email=email, password=hash_password(request.form["password"]))
+            user_datastore.add_role_to_user(user, user_datastore.find_role('teacher'))
+
+            teacher = Teacher(
+                name=request.form["personName"],
+                school=request.form["school"],
+                code=request.form["confirmationCode"],
+                user=user
+            )
             db.session.add(teacher)
             db.session.commit()
-            # return template user_signUpSuccess
+
             return redirect(url_for('user_signUpSuccess'))
+
+    return render_template("user_signUp.html")
 
 
 @application.route("/user_signUpSuccess", methods=["GET"])
@@ -170,12 +170,13 @@ def assign_helper(looking_for: int, type_of_committee: TypeOfCommittee,
                    str(looking_for - number_of_assigned_assignments) + " assignments are still at your disposal."
 
 
-# /user_newTeacherPage (POST -> templateRendered)
-# user_newTeacherPage route, for the new teachers that need to select the number of assignments
-# POST: let teachers select number of assignments limited to their code limit
 @application.route("/user_newTeacherPage", methods=["POST", "GET"])
+@roles_required('teacher')
 def user_newTeacherPage():
-    if request.method == "POST" and not session["currentUserId"] is None:
+    """
+    POST -> Add assignments to the teacher
+    """
+    if request.method == "POST":
         # grab teacher that is signed in
         teacher = Teacher.query.get(session["currentUserId"])
 
@@ -246,38 +247,34 @@ def user_newTeacherPage():
                     num_rem))
             return redirect(url_for('user_newTeacherPage'))
 
-    elif request.method == 'GET' and not session["currentUserId"] is None:
-        type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
-        type_of_committees.sort(key=lambda x: x.__str__())
-        teacher: Teacher = Teacher.query.get(int(session["currentUserId"]))
-        num_remaining = teacher.max_number_of_students_possible() - teacher.number_of_students()
+    type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
+    type_of_committees.sort(key=lambda x: x.__str__())
+    teacher: Teacher = Teacher.query.get(int(session["currentUserId"]))
+    num_remaining = teacher.max_number_of_students_possible() - teacher.number_of_students()
 
-        return render_template("user_newTeacherPage.html", teacher=teacher, numRem=num_remaining,
-                               type_of_committees=type_of_committees)
-
-    flash("An error was encountered please log in again. If the error persists call your HOSPITALITY member.")
-    return render_template("user_registration.html")
+    return render_template("user_newTeacherPage.html", teacher=teacher, numRem=num_remaining,
+                           type_of_committees=type_of_committees)
 
 
 # /userSettingsPage (POST -> templateRendered)
 # page where teachers can edit their info
 @application.route("/userSettingsPage", methods=["POST", "GET"])
+@roles_required('teacher')
 def userSettingsPage():
-    if request.method == "POST" and not session["currentTeacher"] is None:
+    if request.method == "POST":
         teacher_id = request.form["submit"]
         teacher = Teacher.query.get(teacher_id)
         if request.form["password"] != "":
-            teacher.change_password(request.form["password"])
-        teacher.email = request.form["email"]
+            teacher.user.password = hash_password(request.form["password"])
+        teacher.user.email = request.form["email"]
         teacher.name = request.form["name"]
         teacher.school = request.form["school"]
         flash("Changes have been made successfully!")
         db.session.commit()
         return redirect(url_for('userSettingsPage'))
 
-    elif request.method == "GET" and not session["currentTeacher"] is None:
-        teacher = Teacher.query.get(session["currentUserId"])
-        return render_template("user_settingsPage.html", teacher=teacher)
+    teacher = Teacher.query.get(session["currentUserId"])
+    return render_template("user_settingsPage.html", teacher=teacher)
 
 
 # /user_oldTeacherPage (POST GET -> templateRendered)
@@ -285,10 +282,10 @@ def userSettingsPage():
 # POST: name of student is updated if anything in input bar, else name stays as taken
 # GET: the program returns the user_oldTeacherPage()
 @application.route("/user_oldTeacherPage", methods=["POST", "GET"])
-# @login_required
+@roles_required('teacher')
 def user_oldTeacherPage():
     # POST
-    if request.method == "POST" and not session["currentTeacher"] is None:
+    if request.method == "POST":
         # grab teacher that is logged in
         db_session = db.session
         teacher = db_session.query(Teacher).get(session["currentUserId"])
@@ -316,42 +313,37 @@ def user_oldTeacherPage():
         flash("Your responses have been saved. If you want a copy of the final list, please click Download Assignments.")
         return redirect(url_for('user_oldTeacherPage'))
 
-    # GET
-    elif request.method == "GET" and not session.get('currentTeacher') is None:
-        teacher = Teacher.query.get(session["currentUserId"])
-        return teacher.return_user_page_old()
-    else:
-        return redirect(url_for('user_registration'))
+    teacher = Teacher.query.get(session["currentUserId"])
+    return teacher.return_user_page_old()
 
 
 # /userDownload (POST -> templateRendered)
 # return printable html file with all the teacher's info
 # POST: render user_printAssignments.html with teacher's info
 @application.route("/userDownload", methods=["POST"])
-# @login_required
+@roles_required('teacher')
 def userDownload():
-    # POST
-    if request.method == "POST" and not session["currentTeacher"] is None:
-        # grab teacher logged in
-        teacher = Teacher.query.get(session["currentUserId"])
-        # grabs the school name of teacher
-        school = teacher.school
-        # grabs all delegates of the teacher
-        delegates = teacher.delegates
-        # return the html file with the data
-        return render_template("user_printAssignments.html", school=school, delegates=delegates)
+    # grab teacher logged in
+    teacher = Teacher.query.get(session["currentUserId"])
+    # grabs the school name of teacher
+    school = teacher.school
+    # grabs all delegates of the teacher
+    delegates = teacher.delegates
+    # return the html file with the data
+    return render_template("user_printAssignments.html", school=school, delegates=delegates)
 
 
 # /logOut (POST -> templateRendred)
 # similar to signOut but different unknown use
-# POST: delete all session info and flashes, return user_registration.html
-@application.route("/logOut", methods=["POST"])
-# @login_required
+# POST: delete all session info and flashes, return home_page.html
+@application.route("/logOut", methods=["POST", 'GET'])
+@login_required
 def logOut():
     if session:
         session.clear()
         session.pop('_flashes', None)
-    return redirect(url_for('user_registration'))
+    logout_user()
+    return redirect(url_for('home_page'))
 
 
 ###########################
@@ -366,12 +358,13 @@ def logOut():
 # POST: check the button status and act accordingly
 # GET: return returnAdminPage() for all info
 @application.route("/adminOne", methods=["POST", "GET"])
+@roles_required('admin')
 def adminOne():
     # GET
-    if request.method == "GET" and session["adminIn"] is True:
+    if request.method == "GET":
         return return_admin_page(None, None)
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         application.jinja_env.globals.update(numOfAssignments=Committee.number_of_assignments)
         application.jinja_env.globals.update(numOfImportantAssignments=Committee.number_of_important_assignments)
         application.jinja_env.globals.update(numOfDelegates=Committee.number_of_delegates_assigned)
@@ -588,6 +581,7 @@ def adminOne():
 # path to admin_editAssignment, will edit the assignment information, button on main admin page
 # POST: edit the assignment information as specified
 @application.route("/admin_editAssignment", methods=["POST"])
+@roles_required('admin')
 def admin_editAssignment():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
@@ -619,6 +613,7 @@ def admin_editAssignment():
 # POST: math to generate code for teachers
 # GET: return admin_generateCode.html
 @application.route("/admin_generateCode", methods=["GET", "POST"])
+@roles_required('admin')
 def admin_generateCode():
     # GET
     if request.method == "GET" and session["adminIn"] is True:
@@ -641,6 +636,7 @@ def admin_generateCode():
 # add new committee, path to admin_create_committee
 # POST: two parts, first is committee creation, second is assignment creations
 @application.route("/admin_addNewCommittee", methods=["POST", "GET"])
+@roles_required('admin')
 def admin_create_committee():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
@@ -698,6 +694,7 @@ def admin_create_committee():
 # path to admin_addNewCountry, add new assignments to existing committee
 # POST: two stages, first gets info from committee, second creates the assignments
 @application.route("/admin_addNewCountry", methods=["POST"])
+@roles_required('admin')
 def admin_addNewCountry():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
@@ -734,6 +731,7 @@ def admin_addNewCountry():
 # path to admin_teachersTable, buttons in the teacher information table with all the teachers, edit or delete teacher info
 # POST: two types, delete teacher and edit teacher info
 @application.route("/admin_teachersTable", methods=["POST"])
+@roles_required('admin')
 def admin_teachersTable():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
@@ -741,7 +739,7 @@ def admin_teachersTable():
         listValue = value[0:3]
 
         # Delete teacher row(teacher) #
-        if (listValue == "DE_"):
+        if listValue == "DE_":
             deleteInfo = value[3:]
             teacher = Teacher.query.get(int(deleteInfo))
             delegates = Delegate.query.filter(Delegate.teacher_id == teacher.id).all()
@@ -757,7 +755,7 @@ def admin_teachersTable():
             return render_template("admin_teachersTable.html", teachers=teachers)
 
         # Edit teacher row(teacher) #
-        elif (listValue == "ED_"):
+        elif listValue == "ED_":
             edit = value[3:]
             teacher = Teacher.query.filter(Teacher.id == int(edit)).first()
             return render_template("admin_teachersTableEdit.html", teacher=teacher)
@@ -771,21 +769,22 @@ def admin_teachersTable():
 # path to edirRowUser
 # POST: edit a teacher information !!!
 @application.route("/admin_teachersTableEdit", methods=["POST"])
+@roles_required('admin')
 def admin_teachersTableEdit():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
-        teacherID = request.form["Button"]
-        if teacherID[0:2] == "NP":
-            teacher = Teacher.query.get(teacherID[3:])
-            teacher.change_password(request.form["password"])
+        teacher_id = request.form["Button"]
+        if teacher_id[0:2] == "NP":
+            teacher = Teacher.query.get(teacher_id[3:])
+            teacher.user.password = hash_password(request.form["password"])
             flash("The password has been changed succesfully to {}.".format(request.form["password"]))
         else:
-            teacher = Teacher.query.get(teacherID)
-            teacher.email = request.form["email"]
+            teacher = Teacher.query.get(teacher_id)
+            teacher.user.email = request.form["email"]
             teacher.confirmation_code = request.form["ConfCode"]
             teacher.school = request.form["school"]
             flash(
-                "The following has changed: {} = {} , {} = {} , {} = {} .".format(teacher.email, request.form["email"],
+                "The following has changed: {} = {} , {} = {} , {} = {} .".format(teacher.user.email, request.form["email"],
                                                                                   teacher.school,
                                                                                   request.form["school"],
                                                                                   teacher.confirmation_code,
@@ -802,6 +801,7 @@ def admin_teachersTableEdit():
 # GET: reutrn returnAdminSpecialFUnctions()
 # !!! implement flash info and improve functions
 @application.route("/admin_specialFunctions", methods=["GET", "POST"])
+@roles_required('admin')
 def admin_specialFunctions():
     # GET
     if request.method == "GET" and session["adminIn"] is True:
@@ -852,6 +852,7 @@ def admin_specialFunctions():
 # path to admin_editDelegate, edit teacher information in users table
 # POST: edit the teacher information as specified in users table !!!
 @application.route("/admin_editDelegate", methods=["POST"])
+@roles_required('admin')
 def admin_editDelegate():
     if request.method == "POST" and session["adminIn"] is True:
         com = request.form["committee"]
@@ -877,6 +878,7 @@ def admin_editDelegate():
 
 
 @application.route("/admin_takeMeToDelegate", methods=["POST"])
+@roles_required('admin')
 def admin_takeMeToDelegate():
     if request.method == "POST" and session["adminIn"] is True:
         idx = request.form["editDelegate"]
@@ -888,6 +890,7 @@ def admin_takeMeToDelegate():
 # path to admin_delegatesTables
 # POST: !!!
 @application.route("/admin_delegatesTables", methods=["POST"])
+@roles_required('admin')
 def admin_delegatesTables():
     if request.method == "POST" and session["adminIn"] is True:
         value = request.form["Button"]
@@ -930,6 +933,7 @@ def admin_delegatesTables():
 # path to admin_committeeTable
 # POST: !!!
 @application.route("/admin_committeeTable", methods=["POST"])
+@roles_required('admin')
 def admin_committeeTable():
     if request.method == "POST" and session["adminIn"] is True:
         value = request.form["Button"]
@@ -952,6 +956,7 @@ def admin_committeeTable():
 # path to admin_editCommittee, edit teacher information in users table
 # POST: edit the teacher information as specified in users table !!!
 @application.route("/admin_editCommittee", methods=["POST"])
+@roles_required('admin')
 def admin_editCommittee():
     if request.method == "POST" and session["adminIn"] is True:
         db_session = db.session
@@ -977,6 +982,7 @@ def admin_editCommittee():
 
 
 @application.route("/admin_takeMeToCommittee", methods=["POST"])
+@roles_required('admin')
 def admin_takeMeToCommittee():
     if request.method == "POST" and session["adminIn"] is True:
         idx = request.form["editCommittee"]
@@ -990,6 +996,7 @@ def admin_takeMeToCommittee():
 # POST: two part, first is get teacher, committee, and room info, second is add assignment to teacher table
 # GET: return admin_manualRegister.html with teachers and committees
 @application.route("/admin_manualRegister", methods=["GET", "POST"])
+@roles_required('admin')
 def admin_manualRegister():
     # GET
     if request.method == "GET" and session["adminIn"] is True:
@@ -1036,6 +1043,7 @@ def admin_manualRegister():
 # path to admin_stats, only gives information
 # GET: return number of assignments available and total by type
 @application.route("/admin_stats", methods=["GET"])
+@roles_required('admin')
 def admin_stats():
     # GET
     if request.method == "GET" and session["adminIn"] is True:
@@ -1051,6 +1059,7 @@ def admin_stats():
 # POST: admin print committee
 # GET: teacher print their list of assignments
 @application.route("/admin_printCommittee", methods=["POST", "GET"])
+@roles_required('admin')
 def admin_printCommittee():
     # GET (teacher print)
     if request.method == "GET" and session["adminIn"] is True:
@@ -1068,6 +1077,7 @@ def admin_printCommittee():
 # path to admin_changeRooms
 # POST: change the room info of committees in generalList and teacher tables
 @application.route("/admin_changeRooms", methods=["POST"])
+@roles_required('admin')
 def admin_changeRooms():
     # POST
     if request.method == "POST" and session["adminIn"] is True:
@@ -1082,6 +1092,7 @@ def admin_changeRooms():
 
 
 @application.route("/admin_create_type_of_committee", methods=['POST', 'GET'])
+@roles_required('admin')
 def admin_create_type_of_committee():
     form = TypeOfCommitteeForm(request.form)
 
@@ -1102,6 +1113,7 @@ def admin_create_type_of_committee():
 
 
 @application.route("/admin_delete_type_of_committee/<type_of_committee_id>", methods=['POST'])
+@roles_required('admin')
 def admin_delete_type_of_committee(type_of_committee_id):
     if session['adminIn'] is True:
         type_of_committee: TypeOfCommittee = TypeOfCommittee.query.get(type_of_committee_id)
@@ -1115,11 +1127,8 @@ def admin_delete_type_of_committee(type_of_committee_id):
         return redirect(url_for('admin_create_type_of_committee'))
 
 
-###########################
-###########################
-##########    ERROR HANDLERS      ##############
-###########################
-###########################
+#   ERROR HANDLERS      #
+
 
 @application.errorhandler(404)
 def page_not_found(e):

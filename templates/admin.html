@@ -4,9 +4,7 @@
     <form action="/adminOne" method="GET" >
         <button class="btn btn-default" type="submit"> Admin Page </button>
     </form>
-    <form action ="/" method="GET" >
-        <button class="btn btn-default" type="submit"> Login Page </button>
-    </form>
+    <a class="btn btn-default" href="{{ url_for('logOut') }}"> Log Out </a>
     <form action ="/admin_manualRegister" method="GET" >
         <button class="btn btn-default" type="submit"> Manual Register </button>
     </form>

@@ -3,6 +3,7 @@ import enum
 from random import randint
 
 from flask import render_template
+from flask_security import UserMixin, RoleMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Enum
 from passlib.apps import custom_app_context as pwd_context
@@ -142,29 +143,42 @@ class Delegate(db.Model):
         self.grade = grade
 
 
+class RolesUsers(db.Model):
+    __tablename__ = 'roles_users'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column('user_id', db.Integer(), db.ForeignKey('user.id'))
+    role_id = db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+    roles = db.relationship('Role', secondary='roles_users', backref=db.backref('users', lazy='dynamic'))
+
+
 class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
-    email = db.Column(db.Text)
     school = db.Column(db.Text)
-    password = db.Column(db.Text)
     confirmation_code = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('teacher', uselist=False))
     delegates = db.relationship('Delegate', backref='teacher', lazy=True)
 
-    def __init__(self, name, email, password, school, code):
+    def __init__(self, name, school, code, user):
         self.name = name
-        self.email = email
-        self.password = password
         self.school = school
         self.confirmation_code = code
-
-    def change_password(self, new_password: str):
-        """
-        change the teacher's password, hashed and all
-        :param new_password: new password
-        :return: None
-        """
-        self.password = pwd_context.hash(new_password)
+        self.user = user
 
     def can_add_delegates(self):
         """
