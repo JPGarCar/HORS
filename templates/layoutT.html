@@ -16,13 +16,8 @@
 
         <style>
             body {
-                height: 100%;
                 margin: 0;
                 background-color: #EEE7DB
-            }
-            .full-full {
-                background-color: #EEE7DB;
-                height: 100%;
             }
             .general-style {
                 font-family: 'Playfair Display', serif;
@@ -32,16 +27,13 @@
                 margin: 0;
                 padding: 0;
             }
+
             .btn {
-                background-color: rgb(153,0,0);
-                font-family: 'Playfair Display', serif;
-                border: none;
+                background-color: rgb(153, 0, 0);
                 color: white;
-                padding: 16px 32px;
+                padding: 1rem 1.25rem;
                 text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 20px;
+                font-size: 15px;
                 margin: 4px 2px;
                 -webkit-transition-duration: 0.4s; /* Safari */
                 transition-duration: 0.4s;
@@ -52,7 +44,7 @@
         {% block head_content %} {% endblock %}
 
     </head>
-    <body class="d-flex flex-column h-100 justify-content-between">
+    <body class="d-flex flex-column min-vh-100 justify-content-between">
 
         <div class="container-fluid general-style pb-3">
 

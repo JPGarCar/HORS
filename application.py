@@ -12,18 +12,15 @@ from math import ceil
 from forms import TypeOfCommitteeForm
 from models import Teacher, Committee, Assignment, Delegate, TypeOfCommittee, db, User, Role
 import helpers
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
+from env_secrets import SECRET_KEY, SECURITY_PASSWORD_SALT
 
 application = app = Flask(__name__)
-application.secret_key = os.getenv("SECRET_KEY")
+application.secret_key = SECRET_KEY
 application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///immuns.db"
 application.config["SQLALCHEMY_ECHO"] = False
 application.config["DEBUG"] = True
-application.config["SECURITY_PASSWORD_SALT"] = os.getenv("SECURITY_PASSWORD_SALT")
+application.config["SECURITY_PASSWORD_SALT"] = SECURITY_PASSWORD_SALT
 
 bootstrap = Bootstrap(application)
 db.init_app(application)
@@ -53,6 +50,8 @@ def application_init():
     admin = user_datastore.get_user('admin@gmail.com')
     if not admin:
         admin = user_datastore.create_user(email='admin@gmail.com', password=hash_password('adminPassword'))
+    else:
+        admin.password = hash_password('adminPassword')
     user_datastore.add_role_to_user(admin, admin_role)
     db.session.commit()
 
@@ -586,7 +585,7 @@ def adminOne():
 @roles_required('admin')
 def admin_editAssignment():
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         # get values from webpage
         con = request.form["country"]
         idx = int(request.form["Button"])
@@ -617,11 +616,8 @@ def admin_editAssignment():
 @application.route("/admin_generateCode", methods=["GET", "POST"])
 @roles_required('admin')
 def admin_generateCode():
-    # GET
-    if request.method == "GET" and session["adminIn"] is True:
-        return render_template("admin_generateCode.html", code="")
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         totalnum = (int)(request.form["numOfDel"])
         if not totalnum == 0:
             firstnum = int(totalnum % 10)
@@ -632,6 +628,7 @@ def admin_generateCode():
                     str(gensecond) + "".join(choice(ascii_uppercase) for x in range(4)) + str(
                 genfirst) + "".join(choice(ascii_uppercase) for x in range(2))))
         return render_template("admin_generateCode.html", code="")
+    return render_template("admin_generateCode.html", code="")
 
 
 # /admin_addNewCommittee (POST -> templateRendered) !!! might need to add options for room, GET SHOULD USE ENUM stuff
@@ -641,7 +638,7 @@ def admin_generateCode():
 @roles_required('admin')
 def admin_create_committee():
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         value = request.form["Button"]
 
         # Create committee #
@@ -683,13 +680,10 @@ def admin_create_committee():
                 db.session.add(Assignment(committee.id, country, committee_amount + num + 1, important))
             db.session.commit()
             return return_admin_page(None, None)
-    if request.method == 'GET' and session["adminIn"] is True:
-        type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
-        type_of_committees.sort(key=lambda x: x.__str__())
 
-        return render_template("admin_addNewCommittee.html",
-                               second=False,
-                               typeOfCom=type_of_committees)
+    type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
+    type_of_committees.sort(key=lambda x: x.__str__())
+    return render_template("admin_addNewCommittee.html", second=False, typeOfCom=type_of_committees)
 
 
 # /admin_addNewCountry (POST -> templateRendered)
@@ -699,7 +693,7 @@ def admin_create_committee():
 @roles_required('admin')
 def admin_addNewCountry():
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         value = request.form["Button"]
 
         # Get info from committee #
@@ -736,7 +730,7 @@ def admin_addNewCountry():
 @roles_required('admin')
 def admin_teachersTable():
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         value = request.form["Button"]
         listValue = value[0:3]
 
@@ -774,7 +768,7 @@ def admin_teachersTable():
 @roles_required('admin')
 def admin_teachersTableEdit():
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         teacher_id = request.form["Button"]
         if teacher_id[0:2] == "NP":
             teacher = Teacher.query.get(teacher_id[3:])
@@ -805,11 +799,8 @@ def admin_teachersTableEdit():
 @application.route("/admin_specialFunctions", methods=["GET", "POST"])
 @roles_required('admin')
 def admin_specialFunctions():
-    # GET
-    if request.method == "GET" and session["adminIn"] is True:
-        return render_template("admin_specialFunctions.html", committees=Committee.get_committee_dropdown())
     # POST
-    elif request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         # button value to determin function to call
         value = request.form["Button"]
         db_session = db.session
@@ -845,6 +836,8 @@ def admin_specialFunctions():
         db_session.commit()
         return redirect('admin_specialFunctions')
 
+    return render_template("admin_specialFunctions.html", committees=Committee.get_committee_dropdown())
+
 
 # /admin_editDelegate (POST -> templateRendered)
 # path to admin_editDelegate, edit teacher information in users table
@@ -852,7 +845,7 @@ def admin_specialFunctions():
 @application.route("/admin_editDelegate", methods=["POST"])
 @roles_required('admin')
 def admin_editDelegate():
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         com = request.form["committee"]
         con = request.form["country"]
         name = request.form["delegateName"]
@@ -878,7 +871,7 @@ def admin_editDelegate():
 @application.route("/admin_takeMeToDelegate", methods=["POST"])
 @roles_required('admin')
 def admin_takeMeToDelegate():
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         idx = request.form["editDelegate"]
         delegate = Delegate.query.get(int(idx))
         return render_template("admin_editDelegate.html", delegate=delegate)
@@ -890,7 +883,7 @@ def admin_takeMeToDelegate():
 @application.route("/admin_delegatesTables", methods=["POST"])
 @roles_required('admin')
 def admin_delegatesTables():
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         value = request.form["Button"]
         if value == "Search":
             teacher_school_id = request.form["schoolDropDown"]
@@ -933,7 +926,7 @@ def admin_delegatesTables():
 @application.route("/admin_committeeTable", methods=["POST"])
 @roles_required('admin')
 def admin_committeeTable():
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         value = request.form["Button"]
         listValue = value[0:3]
         if (listValue == "ED_"):
@@ -956,7 +949,7 @@ def admin_committeeTable():
 @application.route("/admin_editCommittee", methods=["POST"])
 @roles_required('admin')
 def admin_editCommittee():
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         db_session = db.session
 
         name = request.form["committee"]
@@ -982,7 +975,7 @@ def admin_editCommittee():
 @application.route("/admin_takeMeToCommittee", methods=["POST"])
 @roles_required('admin')
 def admin_takeMeToCommittee():
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         idx = request.form["editCommittee"]
         committee = Committee.query.get(int(idx))
         return render_template("admin_editCommittee.html", committee=committee,
@@ -996,13 +989,7 @@ def admin_takeMeToCommittee():
 @application.route("/admin_manualRegister", methods=["GET", "POST"])
 @roles_required('admin')
 def admin_manualRegister():
-    # GET
-    if request.method == "GET" and session["adminIn"] is True:
-        teachers = Teacher.query.all()
-        committees = Committee.query.all()
-        return render_template("admin_manualRegister.html", teachers=teachers, committees=committees, second=False)
-    # POST
-    elif request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         value = request.form["Button"]
         if value == "next":
             session["addingTeacherId"] = request.form.get("toTeacher")
@@ -1036,6 +1023,10 @@ def admin_manualRegister():
 
             return return_admin_page(None, None)
 
+    teachers = Teacher.query.all()
+    committees = Committee.query.all()
+    return render_template("admin_manualRegister.html", teachers=teachers, committees=committees, second=False)
+
 
 # /admin_stats (GET -> templateRendered)
 # path to admin_stats, only gives information
@@ -1044,7 +1035,7 @@ def admin_manualRegister():
 @roles_required('admin')
 def admin_stats():
     # GET
-    if request.method == "GET" and session["adminIn"] is True:
+    if request.method == "GET":
         committees: list[Committee] = Committee.query.all()
         type_of_committees: list[TypeOfCommittee] = TypeOfCommittee.query.all()
 
@@ -1059,16 +1050,15 @@ def admin_stats():
 @application.route("/admin_printCommittee", methods=["POST", "GET"])
 @roles_required('admin')
 def admin_printCommittee():
-    # GET (teacher print)
-    if request.method == "GET" and session["adminIn"] is True:
-        lista = Committee.get_committee_dropdown()
-        return render_template("admin_printCommittee.html", first=True, second=False, committees=lista)
     # POST (admin print)
-    elif request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST":
         comName = request.form.get("committeeDropDown")
         committee = Committee.query.filter(Committee.name == comName).first()
         return render_template("admin_printCommittee.html", first=False, second=True, committee=committee,
                                assignments=committee.assignments)
+
+    lista = Committee.get_committee_dropdown()
+    return render_template("admin_printCommittee.html", first=True, second=False, committees=lista)
 
 
 # /admin_changeRooms (POST -> templateRendered)
@@ -1078,7 +1068,7 @@ def admin_printCommittee():
 @roles_required('admin')
 def admin_changeRooms():
     # POST
-    if request.method == "POST" and session["adminIn"] is True:
+    if request.method == "POST" :
         committees = Committee.query.all()
         for committee in committees:
             newRoom = request.form[str(committee.id)]
@@ -1094,7 +1084,7 @@ def admin_changeRooms():
 def admin_create_type_of_committee():
     form = TypeOfCommitteeForm(request.form)
 
-    if request.method == 'POST' and form.validate() and session["adminIn"] is True:
+    if request.method == 'POST' and form.validate():
         type_of_committee = TypeOfCommittee(
             level=form.level.data, language=form.language.data,
             is_remote=form.is_remote.data, is_advanced=form.is_advanced.data,
@@ -1104,25 +1094,24 @@ def admin_create_type_of_committee():
         db.session.add(type_of_committee)
         db.session.commit()
         flash('Type of committee {} added successfully!'.format(type_of_committee.__str__()))
-        return redirect(url_for('adminOne'))
-    elif session["adminIn"] is True:
-        committee_types_list: list[TypeOfCommittee] = TypeOfCommittee.query.all()
-        return render_template('admin_add_new_type_of_committee.html', form=form, committee_types_list=committee_types_list)
+        return redirect(url_for('admin_create_type_of_committee'))
+
+    committee_types_list: list[TypeOfCommittee] = TypeOfCommittee.query.all()
+    return render_template('admin_add_new_type_of_committee.html', form=form, committee_types_list=committee_types_list)
 
 
 @application.route("/admin_delete_type_of_committee/<type_of_committee_id>", methods=['POST'])
 @roles_required('admin')
 def admin_delete_type_of_committee(type_of_committee_id):
-    if session['adminIn'] is True:
-        type_of_committee: TypeOfCommittee = TypeOfCommittee.query.get(type_of_committee_id)
-        committee_list: list[Committee] = type_of_committee.committees
-        for committee in committee_list:
-            db.session.delete(committee)
+    type_of_committee: TypeOfCommittee = TypeOfCommittee.query.get(type_of_committee_id)
+    committee_list: list[Committee] = type_of_committee.committees
+    for committee in committee_list:
+        db.session.delete(committee)
 
-        db.session.delete(type_of_committee)
-        db.session.commit()
+    db.session.delete(type_of_committee)
+    db.session.commit()
 
-        return redirect(url_for('admin_create_type_of_committee'))
+    return redirect(url_for('admin_create_type_of_committee'))
 
 
 #   ERROR HANDLERS      #

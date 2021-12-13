@@ -75,7 +75,7 @@ class TypeOfCommittee(db.Model):
         if self.is_advanced:
             name = name + ' Advanced'
         if self.is_remote:
-            name = name + ' Remote'
+            name = name + ' Online'
 
         return name
 

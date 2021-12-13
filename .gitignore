@@ -94,3 +94,4 @@ gaenv_lib/
 appengine_config.py
 
 .env
+env_secrets.py
